@@ -97,6 +97,8 @@ h1, h2, h3 { font-family: "Fredoka", "Nunito", sans-serif; line-height: 1.1; mar
 .steps li:nth-child(5n+5)::before { background: var(--pink); color: #fff; }
 
 .contact { text-align: center; }
+.phone { font: 600 1.2rem "Fredoka", sans-serif; margin: .2rem 0 0; }
+.phone a { text-decoration: none; color: var(--wa); }
 .social { display: flex; justify-content: center; flex-wrap: wrap; gap: .7rem; margin: 1rem 0 1.5rem; }
 .social a { border: 1.5px solid var(--ink); border-radius: 999px; padding: .5rem 1.1rem; font-weight: 700; text-decoration: none; }
 .foot { text-align: center; padding: 2rem 1rem; border-top: 1px solid var(--line); color: var(--muted); }

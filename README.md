@@ -12,7 +12,7 @@ Proyecto del curso **Servicios Cloud — Sección 45104**, Universidad Tecnológ
 Cliente (TikTok / redes)
    │
    ▼
-makiptecrea.pe ──► Firebase Hosting (web/)  ──── CTA ───► WhatsApp (mensaje contextual)
+makiptecrea.pe ──► Firebase Hosting (web/)  ──── CTA ───► WhatsApp +51 923 119 167 (mensaje contextual)
                         │ /api/catalogo
                         ▼
                    Cloud Run (api/)  ── API externa Odoo (clave en Secret Manager)
@@ -88,7 +88,7 @@ Dominio `makiptecrea.pe`: S/110/año (aparte). Firebase Hosting y TLS: US$0.00 d
 
 ## Por completar
 
-- [ ] Número de WhatsApp de la empresa en `web/config.js`.
+- [x] Número de WhatsApp de la empresa en `web/config.js` (+51 923 119 167).
 - [ ] ID de proyecto GCP, cuenta de facturación y correo de alertas en `terraform.tfvars`.
 - [ ] Validar en la PoC el mecanismo de API externa de la versión fijada de Odoo (`ODOO_API_MODE`).
 - [ ] Validar estados operativos en Odoo (Proyecto vs. campo de estado) — ver `docs/pipeline-estados.md`.
