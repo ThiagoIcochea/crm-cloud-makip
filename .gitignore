@@ -1,0 +1,36 @@
+# Terraform
+**/.terraform/*
+*.tfstate
+*.tfstate.*
+crash.log
+*.tfvars
+!*.tfvars.example
+.terraform.lock.hcl.bak
+override.tf
+override.tf.json
+
+# Secretos
+.env
+*.pem
+*.key
+*-key.json
+credentials*.json
+
+# Node
+node_modules/
+npm-debug.log*
+coverage/
+
+# Firebase
+.firebase/
+.firebaserc
+
+# Odoo local
+app/data/
+app/addons-data/
+
+# SO / editores
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

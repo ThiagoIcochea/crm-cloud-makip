@@ -1,0 +1,6 @@
+name,default_code,categ_id,list_price,sale_ok,description_sale
+Llavero personalizado (DEMO),DEMO-01,Llaveros,0,True,Datos ficticios para pruebas: reemplazar por el catálogo real de la empresa.
+Topper para torta (DEMO),DEMO-02,Fiestas,0,True,Datos ficticios para pruebas.
+Medallero (DEMO),DEMO-03,Decoración,0,True,Datos ficticios para pruebas.
+Cuadro con marco (DEMO),DEMO-04,Decoración,0,True,Datos ficticios para pruebas.
+Delivery / envío,SERV-DEL,Servicios,0,True,Línea de costo adicional de envío (RN-05). Monto según destino.

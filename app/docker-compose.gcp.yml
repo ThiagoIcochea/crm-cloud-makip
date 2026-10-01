@@ -1,0 +1,20 @@
+# Superposición para la VM en GCP: Nginx con TLS delante de Odoo.
+# Odoo solo queda expuesto en la red privada (Cloud Run lo consulta por 8069 interno).
+services:
+  odoo:
+    ports:
+      - "8069:8069"   # restringido por firewall a la subred (regla allow-api-to-odoo)
+
+  nginx:
+    image: nginx:1.27-alpine
+    depends_on: [odoo]
+    environment:
+      BACKOFFICE_DOMAIN: ${BACKOFFICE_DOMAIN}
+    volumes:
+      - ./nginx/templates:/etc/nginx/templates:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /var/www/certbot:/var/www/certbot:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    restart: unless-stopped

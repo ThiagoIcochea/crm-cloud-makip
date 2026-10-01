@@ -1,0 +1,7 @@
+operacion_id,modalidad,tarea,inicio_hhmmss,fin_hhmmss,minutos,estado_conocido,incidencia,observador,fecha,observaciones
+OP-01,manual,localizar_info,,,,,,,,
+OP-01,plataforma,localizar_info,,,,,,,,
+OP-01,manual,registro_pedido,,,,,,,,
+OP-01,plataforma,registro_pedido,,,,,,,,
+SEM-01,manual,resumen_semanal,,,,,,,,
+SEM-01,plataforma,resumen_semanal,,,,,,,,

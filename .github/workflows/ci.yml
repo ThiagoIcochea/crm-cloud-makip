@@ -1,0 +1,81 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  terraform:
+    name: Terraform (fmt, validate, lint, seguridad)
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        env: [dev, demo]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8
+      - name: fmt
+        run: terraform fmt -check -recursive infra
+      - name: validate
+        working-directory: infra/environments/${{ matrix.env }}
+        run: |
+          terraform init -backend=false -input=false
+          terraform validate
+      - uses: terraform-linters/setup-tflint@v4
+      - name: tflint
+        run: tflint --chdir=infra --recursive
+      - name: checkov
+        uses: bridgecrewio/checkov-action@v12
+        with:
+          directory: infra
+          framework: terraform
+          soft_fail: true   # informativo durante el MVP; endurecer en semana 9
+
+  secrets:
+    name: Gitleaks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  api:
+    name: API de catálogo (tests + imagen)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm test
+      - name: build
+        run: docker build -t catalog-api:ci .
+      - name: trivy
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: catalog-api:ci
+          severity: CRITICAL,HIGH
+          exit-code: "0"
+
+  web:
+    name: Landing (HTML)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npx --yes html-validate@8 web/index.html
+      - run: node --check web/app.js && node --check web/config.js

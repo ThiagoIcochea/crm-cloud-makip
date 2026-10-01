@@ -1,0 +1,31 @@
+#!/bin/bash
+# Arranque de la VM de Odoo (generado por Terraform). Idempotente.
+set -euo pipefail
+
+if ! command -v docker >/dev/null; then
+  apt-get update -y
+  apt-get install -y ca-certificates curl git
+  curl -fsSL https://get.docker.com | sh
+fi
+
+mkdir -p /opt/makip
+cd /opt/makip
+if [ ! -d repo ]; then
+  git clone --depth 1 "${repository_url}" repo
+fi
+cd repo/app
+
+DB_PASSWORD=$(gcloud secrets versions access latest --secret="${db_secret}")
+
+cat > .env <<ENV
+ODOO_VERSION=${odoo_version}
+DB_HOST=${db_host}
+DB_PORT=5432
+DB_NAME=${db_name}
+DB_USER=odoo
+DB_PASSWORD=$DB_PASSWORD
+BACKOFFICE_DOMAIN=${domain}
+ENV
+chmod 600 .env
+
+docker compose -f docker-compose.yml -f docker-compose.gcp.yml up -d

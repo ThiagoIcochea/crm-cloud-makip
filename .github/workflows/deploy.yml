@@ -1,0 +1,94 @@
+name: Deploy
+
+# Despliegue controlado: manual y con aprobación del entorno en GitHub.
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Entorno
+        type: choice
+        options: [dev, demo]
+        default: dev
+      target:
+        description: Qué desplegar
+        type: choice
+        options: [all, infra, api, web]
+        default: all
+
+permissions:
+  contents: read
+  id-token: write   # OIDC para Workload Identity Federation (sin llaves JSON)
+
+concurrency:
+  group: deploy-${{ inputs.environment }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment: ${{ inputs.environment }}
+    env:
+      REGION: southamerica-west1
+      PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ vars.GCP_WIF_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOY_SA }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      # ---------- Infraestructura ----------
+      - if: inputs.target == 'all' || inputs.target == 'infra'
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8
+      - if: inputs.target == 'all' || inputs.target == 'infra'
+        name: terraform plan / apply
+        working-directory: infra/environments/${{ inputs.environment }}
+        env:
+          TF_VAR_project_id: ${{ vars.GCP_PROJECT_ID }}
+          TF_VAR_github_repository: ${{ github.repository }}
+          TF_VAR_firebase_site_id: ${{ vars.FIREBASE_SITE_ID }}
+          TF_VAR_alert_email: ${{ vars.ALERT_EMAIL }}
+          TF_VAR_custom_domain: ${{ vars.CUSTOM_DOMAIN }}
+          TF_VAR_backoffice_domain: ${{ vars.BACKOFFICE_DOMAIN }}
+          TF_VAR_billing_account: ${{ vars.BILLING_ACCOUNT }}
+        run: |
+          terraform init -input=false -backend-config="bucket=${{ vars.TF_STATE_BUCKET }}"
+          terraform plan -input=false -out=tfplan
+          terraform apply -input=false tfplan
+
+      # ---------- API de catálogo (Cloud Run) ----------
+      - if: inputs.target == 'all' || inputs.target == 'api'
+        name: build & deploy API
+        run: |
+          IMAGE="${REGION}-docker.pkg.dev/${PROJECT_ID}/makip-${{ inputs.environment }}-images/catalog-api:${GITHUB_SHA::7}"
+          gcloud auth configure-docker "${REGION}-docker.pkg.dev" --quiet
+          docker build -t "$IMAGE" api
+          docker push "$IMAGE"
+          gcloud run deploy "makip-${{ inputs.environment }}-catalog-api" \
+            --image "$IMAGE" --region "$REGION" --project "$PROJECT_ID" --quiet
+
+      # ---------- Landing (Firebase Hosting) ----------
+      - if: inputs.target == 'all' || inputs.target == 'web'
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - if: inputs.target == 'all' || inputs.target == 'web'
+        name: deploy landing
+        working-directory: web
+        run: |
+          sed -i "s/makip-dev-catalog-api/makip-${{ inputs.environment }}-catalog-api/" firebase.json
+          npx --yes firebase-tools@13 deploy --only hosting \
+            --project "$PROJECT_ID" --non-interactive
+
+      # ---------- Smoke tests ----------
+      - name: smoke tests
+        env:
+          LANDING_URL: ${{ vars.LANDING_URL }}
+          API_URL: ${{ vars.API_URL }}
+          BACKOFFICE_URL: ${{ vars.BACKOFFICE_URL }}
+        run: bash scripts/smoke_test.sh

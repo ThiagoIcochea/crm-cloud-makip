@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Makip Te Crea — Productos personalizados</title>
+  <meta name="description" content="Productos personalizados y merchandising en Lima. Revisa el catálogo y escríbenos por WhatsApp para cotizar tu diseño.">
+  <link rel="icon" href="assets/logo-makip.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top">
+    <a class="brand" href="#inicio" aria-label="Makip Te Crea, inicio">
+      <img src="assets/logo-makip.jpg" alt="" width="44" height="44">
+      <span>Makip <em>Te Crea</em></span>
+    </a>
+    <nav aria-label="Principal">
+      <a href="#catalogo">Catálogo</a>
+      <a href="#como">Cómo pedir</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+  </header>
+
+  <main id="inicio">
+    <section class="hero">
+      <div class="hero-text">
+        <p class="kicker">Merchandising y regalos a tu medida</p>
+        <h1>Lo imaginas,<br><span class="mark">te lo creamos.</span></h1>
+        <p class="lead">Llaveros, toppers, medalleros, cuadros y más, diseñados para ti. Mira el catálogo, elige un producto y cotízalo por WhatsApp.</p>
+        <div class="hero-cta">
+          <a class="btn btn-primary" href="#catalogo">Ver catálogo</a>
+          <button class="btn btn-ghost" type="button" data-wa-general>Escríbenos</button>
+        </div>
+      </div>
+      <div class="hero-blocks" aria-hidden="true">
+        <span style="--c:var(--green)">M</span><span style="--c:var(--teal)">A</span><span style="--c:var(--yellow)">K</span><span style="--c:var(--pink)">I</span><span style="--c:var(--orange)">P</span>
+      </div>
+    </section>
+
+    <section id="catalogo" class="section">
+      <div class="section-head">
+        <h2>Catálogo</h2>
+        <p class="note">Las imágenes son referenciales: tu diseño personalizado se prepara después de confirmar el pedido.</p>
+      </div>
+      <div class="filters" role="toolbar" aria-label="Filtrar por categoría"></div>
+      <p class="status" role="status" aria-live="polite"></p>
+      <div class="grid" id="grid"></div>
+    </section>
+
+    <section id="como" class="section how">
+      <h2>¿Cómo pedir?</h2>
+      <ol class="steps">
+        <li><strong>Elige</strong> un producto y escríbenos por WhatsApp desde su botón.</li>
+        <li><strong>Cotizamos</strong> según cantidad y personalización.</li>
+        <li><strong>Confirmas</strong> con un adelanto del 50 %.</li>
+        <li><strong>Diseñamos</strong> y te enviamos la propuesta para revisarla.</li>
+        <li><strong>Apruebas</strong> el diseño y pasa a producción (ya no se modifica).</li>
+        <li><strong>Entregamos</strong> al cancelar el saldo: delivery (costo adicional) o recojo.</li>
+      </ol>
+    </section>
+
+    <section id="contacto" class="section contact">
+      <h2>Síguenos y conversemos</h2>
+      <div class="social"></div>
+      <button class="btn btn-primary" type="button" data-wa-general>Cotizar por WhatsApp</button>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p>© <span id="year"></span> Makip Te Crea · Lima, Perú</p>
+    <p class="small">Sin pagos en línea: cotización, adelanto y saldo se coordinan por WhatsApp.</p>
+  </footer>
+
+  <template id="card">
+    <article class="card">
+      <div class="thumb"><img loading="lazy" alt=""></div>
+      <div class="card-body">
+        <p class="cat"></p>
+        <h3></h3>
+        <p class="desc"></p>
+        <div class="card-foot">
+          <p class="price"></p>
+          <button class="btn btn-wa" type="button">Consultar por WhatsApp</button>
+        </div>
+        <p class="sku"></p>
+      </div>
+    </article>
+  </template>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

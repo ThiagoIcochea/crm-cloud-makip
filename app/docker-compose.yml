@@ -1,0 +1,33 @@
+# Odoo Community + PostgreSQL (local) / Cloud SQL (GCP)
+# Local:  cp .env.example .env && docker compose --profile local up -d
+# GCP:    lo ejecuta el startup script de la VM con docker-compose.gcp.yml
+services:
+  db:
+    profiles: ["local"]
+    image: postgres:16
+    environment:
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: postgres
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  odoo:
+    image: odoo:${ODOO_VERSION}
+    environment:
+      HOST: ${DB_HOST}
+      PORT: ${DB_PORT}
+      USER: ${DB_USER}
+      PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - odoo-data:/var/lib/odoo           # filestore (imágenes de productos, adjuntos)
+      - ./config/odoo.conf:/etc/odoo/odoo.conf:ro
+      - ./addons:/mnt/extra-addons:ro     # solo extensiones ligeras justificadas (nivel 3)
+    ports:
+      - "8069:8069"
+    restart: unless-stopped
+
+volumes:
+  pg-data:
+  odoo-data:

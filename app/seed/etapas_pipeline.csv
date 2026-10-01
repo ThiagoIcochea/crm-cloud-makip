@@ -1,0 +1,13 @@
+name,sequence,tramo
+Nueva consulta,1,Comercial
+Cotizado,2,Comercial
+Confirmado - pendiente de adelanto,3,Comercial
+Adelanto recibido,4,Comercial
+Diseño,10,Operativo
+Diseño en revisión del cliente,11,Operativo
+Aprobado para producción,12,Operativo
+Producción,13,Operativo
+Empaquetado,14,Operativo
+Pendiente de saldo,15,Operativo
+Listo para entrega/recojo,16,Operativo
+Entregado,17,Operativo

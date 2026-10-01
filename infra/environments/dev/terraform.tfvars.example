@@ -1,0 +1,11 @@
+# Copiar a terraform.tfvars (ignorado por Git) y completar.
+project_id        = "makip-crm-dev"
+github_repository = "OWNER/crm-cloud-makip"
+firebase_site_id  = "makip-te-crea-dev"
+alert_email       = "equipo@example.com"
+
+# Opcionales
+custom_domain     = ""                  # "makiptecrea.pe" en demo
+backoffice_domain = ""                  # "crm.makiptecrea.pe"
+billing_account   = ""                  # "XXXXXX-XXXXXX-XXXXXX" para el presupuesto
+enable_pitr       = false
