@@ -105,11 +105,13 @@ module "cloudrun" {
 }
 
 module "hosting" {
-  source        = "../../modules/hosting"
-  project_id    = var.project_id
-  site_id       = var.firebase_site_id
-  custom_domain = var.custom_domain
-  depends_on    = [google_project_service.apis]
+  source                  = "../../modules/hosting"
+  count                   = var.enable_hosting ? 1 : 0
+  project_id              = var.project_id
+  site_id                 = var.firebase_site_id
+  custom_domain           = var.custom_domain
+  create_firebase_project = var.create_firebase_project
+  depends_on              = [google_project_service.apis]
 }
 
 module "observability" {

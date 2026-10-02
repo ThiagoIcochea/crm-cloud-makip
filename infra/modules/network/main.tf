@@ -44,7 +44,7 @@ resource "google_compute_firewall" "odoo_web" {
   }
 }
 
-# SSH solo a través de IAP (sin puerto 22 abierto a Internet)
+# SSH y Odoo (8069) solo a través de IAP: sin puertos administrativos abiertos a Internet
 resource "google_compute_firewall" "iap_ssh" {
   project       = var.project_id
   name          = "${var.prefix}-allow-iap-ssh"
@@ -55,7 +55,7 @@ resource "google_compute_firewall" "iap_ssh" {
 
   allow {
     protocol = "tcp"
-    ports    = ["22"]
+    ports    = ["22", "8069"]
   }
 }
 

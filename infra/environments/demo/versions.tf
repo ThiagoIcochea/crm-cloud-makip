@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 1.6.0, < 2.0.0"
+  required_version = ">= 1.5.0, < 2.0.0"
 
   required_providers {
     google = {
@@ -24,11 +24,15 @@ terraform {
 }
 
 provider "google" {
-  project = var.project_id
-  region  = var.region
+  project               = var.project_id
+  region                = var.region
+  user_project_override = true
+  billing_project       = var.project_id
 }
 
 provider "google-beta" {
-  project = var.project_id
-  region  = var.region
+  project               = var.project_id
+  region                = var.region
+  user_project_override = true
+  billing_project       = var.project_id
 }

@@ -28,4 +28,14 @@ BACKOFFICE_DOMAIN=${domain}
 ENV
 chmod 600 .env
 
-docker compose -f docker-compose.yml -f docker-compose.gcp.yml up -d
+COMPOSE="docker compose -f docker-compose.yml -f docker-compose.gcp.yml"
+
+# Primera vez: crear la base e instalar los módulos estándar del MVP
+if [ ! -f /opt/makip/.odoo-initialized ]; then
+  $COMPOSE run --rm odoo odoo -d ${db_name} -i base,contacts,crm,sale_management --stop-after-init \
+    && touch /opt/makip/.odoo-initialized
+fi
+
+# Nginx necesita el certificado TLS (ver docs/runbook.md); Odoo arranca aunque Nginx espere.
+$COMPOSE up -d odoo
+$COMPOSE up -d nginx || true

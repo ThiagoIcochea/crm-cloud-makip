@@ -23,6 +23,18 @@ variable "github_repository" {
 
 variable "firebase_site_id" { type = string }
 
+variable "enable_hosting" {
+  description = "Crear el sitio de Firebase Hosting (false para probar solo la infraestructura base)"
+  type        = bool
+  default     = true
+}
+
+variable "create_firebase_project" {
+  description = "false si Firebase ya se agregó al proyecto desde la consola"
+  type        = bool
+  default     = true
+}
+
 variable "custom_domain" {
   type    = string
   default = ""

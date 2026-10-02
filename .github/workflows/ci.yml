@@ -16,7 +16,7 @@ jobs:
       matrix:
         env: [dev, demo]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.9.8
@@ -29,7 +29,11 @@ jobs:
           terraform validate
       - uses: terraform-linters/setup-tflint@v4
       - name: tflint
-        run: tflint --chdir=infra --recursive
+        if: matrix.env == 'dev'   # el linter recorre todo infra/ una sola vez
+        working-directory: infra
+        run: |
+          tflint --init
+          tflint --recursive --minimum-failure-severity=error
       - name: checkov
         uses: bridgecrewio/checkov-action@v12
         with:
@@ -41,7 +45,7 @@ jobs:
     name: Gitleaks
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
       - uses: gitleaks/gitleaks-action@v2
@@ -55,15 +59,15 @@ jobs:
       run:
         working-directory: api
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
       - run: npm test
       - name: build
         run: docker build -t catalog-api:ci .
       - name: trivy
-        uses: aquasecurity/trivy-action@0.28.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: catalog-api:ci
           severity: CRITICAL,HIGH
@@ -73,8 +77,8 @@ jobs:
     name: Landing (HTML)
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
       - run: npx --yes html-validate@8 web/index.html

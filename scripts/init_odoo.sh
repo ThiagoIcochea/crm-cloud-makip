@@ -4,5 +4,5 @@
 set -euo pipefail
 cd "$(dirname "$0")/../app"
 MODULES="${MODULES:-base,contacts,crm,sale_management}"
-docker compose run --rm odoo odoo -d makip -i "$MODULES" --without-demo=all --stop-after-init
+docker compose run --rm odoo odoo -d makip -i "$MODULES" --stop-after-init
 echo "Listo. Importa app/seed/etapas_pipeline.csv (CRM > Configuración > Etapas) y app/seed/productos_ficticios.csv (Ventas > Productos)."

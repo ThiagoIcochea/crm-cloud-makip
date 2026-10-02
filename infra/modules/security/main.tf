@@ -92,6 +92,17 @@ resource "google_secret_manager_secret" "odoo_api_key" {
   }
 }
 
+# Versión inicial para que Cloud Run pueda arrancar. El valor real se carga
+# después con gcloud; Terraform no lo sobrescribe (ignore_changes).
+resource "google_secret_manager_secret_version" "odoo_api_key_initial" {
+  secret      = google_secret_manager_secret.odoo_api_key.id
+  secret_data = "PENDIENTE-cargar-clave-real"
+
+  lifecycle {
+    ignore_changes = [secret_data, enabled]
+  }
+}
+
 resource "google_secret_manager_secret_iam_member" "crm_db" {
   project   = var.project_id
   secret_id = google_secret_manager_secret.db_password.secret_id

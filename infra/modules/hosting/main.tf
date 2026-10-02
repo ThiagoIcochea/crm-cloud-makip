@@ -1,6 +1,7 @@
 # Firebase Hosting para la landing. Requiere el proyecto habilitado en Firebase.
 resource "google_firebase_project" "default" {
   provider = google-beta
+  count    = var.create_firebase_project ? 1 : 0
   project  = var.project_id
 }
 

@@ -60,6 +60,17 @@ cd api && npm install && cp .env.example .env && npm run dev     # http://localh
 cd web && npx serve .     # o abre web/index.html; usa datos de demostración si la API no responde
 ```
 
+## Probar en tu proyecto de Google Cloud
+
+Desde Google Cloud Shell:
+
+```bash
+git clone https://github.com/ThiagoIcochea/crm-cloud-makip.git && cd crm-cloud-makip
+bash scripts/probar_gcp.sh TU_ID_DE_PROYECTO   # init + validate + plan, sin costo
+```
+
+Guía completa (crear, verificar, abrir Odoo por túnel IAP y destruir): [`docs/probar-gcp.md`](docs/probar-gcp.md).
+
 ## Despliegue en GCP
 
 1. Crear el bucket de estado: `gsutil mb -l southamerica-west1 gs://<PROYECTO>-tfstate && gsutil versioning set on gs://<PROYECTO>-tfstate`.
