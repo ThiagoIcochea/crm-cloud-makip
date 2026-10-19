@@ -27,7 +27,7 @@ if [ "$(gcloud billing projects describe "$PROJECT_ID" --format='value(billingEn
 fi
 
 echo "==> Verificando Terraform"
-terraform version | head -1
+terraform version 2>/dev/null | head -1 || true
 
 echo "==> Habilitando APIs base (Terraform habilita el resto)"
 gcloud services enable serviceusage.googleapis.com cloudresourcemanager.googleapis.com storage.googleapis.com
