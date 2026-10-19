@@ -1,0 +1,8 @@
+.git
+infra
+app
+docs
+analytics
+scripts
+api/test
+api/node_modules

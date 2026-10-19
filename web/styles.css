@@ -115,3 +115,5 @@ h1, h2, h3 { font-family: "Fredoka", "Nunito", sans-serif; line-height: 1.1; mar
   .top nav a:not(:first-child) { display: none; }
 }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+
+.foot .credit { opacity: .75; font-size: .8rem; }

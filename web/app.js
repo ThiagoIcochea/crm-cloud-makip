@@ -53,7 +53,7 @@
       node.querySelector('.cat').textContent = p.categoria || '';
       node.querySelector('h3').textContent = p.nombre;
       node.querySelector('.desc').textContent = p.descripcion || '';
-      node.querySelector('.price').textContent = Number.isFinite(p.precio) ? `Desde ${money.format(p.precio)}` : 'Consultar precio';
+      node.querySelector('.price').textContent = Number.isFinite(p.precio) && p.precio > 0 ? `Desde ${money.format(p.precio)}` : 'Consultar precio';
       node.querySelector('.sku').textContent = p.codigo ? `Código: ${p.codigo}` : '';
       node.querySelector('.btn-wa').addEventListener('click', () => openWhatsApp(productMessage(p)));
       grid.appendChild(node);

@@ -71,6 +71,16 @@ bash scripts/probar_gcp.sh TU_ID_DE_PROYECTO   # init + validate + plan, sin cos
 
 Guía completa (crear, verificar, abrir Odoo por túnel IAP y destruir): [`docs/probar-gcp.md`](docs/probar-gcp.md).
 
+### Demostración completa (catálogo real en Odoo + landing en Cloud Run)
+
+```bash
+bash scripts/probar_gcp.sh TU_ID_DE_PROYECTO && (cd infra/environments/dev && terraform apply tfplan)
+bash scripts/demo_gcp.sh TU_ID_DE_PROYECTO     # carga 43 productos reales, pipeline y datos de prueba; publica la landing
+bash scripts/destruir_gcp.sh TU_ID_DE_PROYECTO # elimina todo al terminar
+```
+
+El catálogo real (productos, precios y fotos de Makip Te Crea) está en `app/seed/catalogo/`.
+
 ## Despliegue en GCP
 
 1. Crear el bucket de estado: `gsutil mb -l southamerica-west1 gs://<PROYECTO>-tfstate && gsutil versioning set on gs://<PROYECTO>-tfstate`.
@@ -106,6 +116,6 @@ Dominio `makiptecrea.pe`: S/110/año (aparte). Firebase Hosting y TLS: US$0.00 d
 
 ## Equipo
 
-Icochea Rodriguez, Thiago Paolo · Gonzales Aguilar, Carlos Enrique Giussepe · Huamani Pereira, Eddyson Cesar · Torres Centeno, Emmanuel Misael · Remuzgo Tovar, Huber Eduardo · Quispe Saavedra, Karen Meylin
+Icochea Rodriguez, Thiago Paolo · Gonzales Aguilar, Carlos Enrique Giussepe · Huamani Pereira, Eddyson Cesar · Remuzgo Tovar, Huber Eduardo · Quispe Saavedra, Karen Meylin
 
 Flujo de trabajo: ramas por tarea, Pull Request con revisión de otro integrante, `main` protegida.

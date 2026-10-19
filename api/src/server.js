@@ -1,9 +1,28 @@
 import http from 'node:http';
 import { pathToFileURL } from 'node:url';
+import { readFile } from 'node:fs/promises';
+import path from 'node:path';
 import { createOdooClient, OdooError } from './odoo.js';
 import { createCatalog, imageMime, DEFAULT_DOMAIN } from './catalog.js';
 
-export function createApp({ catalog, allowedOrigins = [] }) {
+const MIME = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
+  '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.svg': 'image/svg+xml', '.ico': 'image/x-icon', '.webp': 'image/webp' };
+
+// Landing estática opcional (STATIC_DIR): permite publicar la web en el mismo servicio de Cloud Run.
+async function serveStatic(dir, pathname, res) {
+  const rel = pathname === '/' ? 'index.html' : decodeURIComponent(pathname).replace(/^\/+/, '');
+  const file = path.resolve(dir, rel);
+  if (!file.startsWith(path.resolve(dir) + path.sep)) return false;
+  try {
+    const body = await readFile(file);
+    res.writeHead(200, { 'Content-Type': MIME[path.extname(file).toLowerCase()] || 'application/octet-stream',
+      'Cache-Control': rel === 'index.html' ? 'no-cache' : 'public, max-age=3600', 'X-Content-Type-Options': 'nosniff' });
+    res.end(body);
+    return true;
+  } catch { return false; }
+}
+
+export function createApp({ catalog, allowedOrigins = [], staticDir = '' }) {
   const log = (severity, message, extra = {}) =>
     console.log(JSON.stringify({ severity, message, ...extra })); // formato estructurado para Cloud Logging
 
@@ -50,6 +69,7 @@ export function createApp({ catalog, allowedOrigins = [] }) {
         return send(res, 200, img, { 'Content-Type': imageMime(img), 'Cache-Control': 'public, max-age=3600' });
       }
 
+      if (staticDir && (await serveStatic(staticDir, url.pathname, res))) return;
       return send(res, 404, { error: 'No encontrado' });
     } catch (err) {
       const status = err instanceof OdooError ? 503 : 500;
@@ -75,5 +95,5 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   const catalog = createCatalog({ odoo, domain, ttlMs: Number(env.CACHE_TTL_MS || 300_000) });
   const allowedOrigins = (env.ALLOWED_ORIGINS || 'http://localhost:3000').split(',').map((s) => s.trim());
   const port = Number(env.PORT || 8080);
-  createApp({ catalog, allowedOrigins }).listen(port, () => console.log(`API de catálogo en :${port}`));
+  createApp({ catalog, allowedOrigins, staticDir: env.STATIC_DIR || '' }).listen(port, () => console.log(`API de catálogo en :${port}`));
 }
