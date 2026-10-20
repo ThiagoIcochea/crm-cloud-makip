@@ -93,6 +93,13 @@ def main():
     o = Odoo(a.url, a.db, "admin", a.admin_password)
     print(f"Conectado a Odoo ({a.db}) como admin, uid={o.uid}")
 
+    # ---------- Idioma español (Perú) ----------
+    lang = o("res.lang", "search_read", [["code", "=", "es_PE"]], fields=["id", "active"], context={"active_test": False})
+    if lang and not lang[0]["active"]:
+        wiz = o("base.language.install", "create", {"lang_ids": [(6, 0, [lang[0]["id"]])], "overwrite": False})
+        o("base.language.install", "lang_install", [wiz])
+        print("Idioma español (Perú) instalado")
+
     # ---------- Empresa ----------
     pen = o.ref("base.PEN")
     if pen:
@@ -115,6 +122,9 @@ def main():
     for nombre, login in EQUIPO:
         vendedores.append(o.upsert("res.users", [["login", "=", login]], {"name": nombre, "login": login}))
     o("res.users", "write", [o.uid], {"name": "Administrador Makip"})
+    if lang:
+        todos = o.search("res.users", [["share", "=", False]])
+        o("res.users", "write", todos, {"lang": "es_PE", "tz": "America/Lima"})
     team = o.upsert("crm.team", [["name", "=", "Ventas Makip Te Crea"]],
                     {"name": "Ventas Makip Te Crea", "user_id": vendedores[0], "member_ids": [(6, 0, vendedores)]})
     print(f"Equipo de ventas con {len(vendedores)} integrantes")
