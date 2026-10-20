@@ -14,7 +14,11 @@ done
 
 echo "==> terraform destroy (entorno dev)"
 cd "$REPO_ROOT/infra/environments/dev"
-terraform destroy -auto-approve -input=false
+if ! terraform destroy -auto-approve -input=false; then
+  echo "terraform destroy no terminó: se conserva el bucket de estado para reintentar."
+  echo "Si el error es por usuarios de Cloud SQL o por la IP serverless de Cloud Run, ejecuta scripts/limpiar_restos_gcp.sh"
+  exit 1
+fi
 
 echo "==> Recursos creados fuera de Terraform"
 gcloud secrets delete odoo-admin-password --quiet 2>/dev/null || true
