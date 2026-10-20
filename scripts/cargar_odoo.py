@@ -115,6 +115,10 @@ def main():
             o("res.company", "write", [1], {"currency_id": pen})
     except xmlrpc.client.Fault as e:
         print("Aviso: no se pudo cambiar la moneda a PEN:", e.faultString.splitlines()[-1])
+    if pen:  # las cotizaciones toman la moneda de la tarifa
+        tarifas = o.search("product.pricelist", [], context={"active_test": False})
+        if tarifas:
+            o("product.pricelist", "write", tarifas, {"currency_id": pen, "name": "Tarifa Makip (S/)"})
     print("Empresa: Makip Te Crea (Lima, PEN)")
 
     # ---------- Equipo comercial (usuarios internos sin acceso por contraseña) ----------
