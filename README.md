@@ -21,7 +21,7 @@ makiptecrea.pe ──► Firebase Hosting (web/)  ──── CTA ───► 
                    Compute Engine: Odoo Community + Nginx (app/)
                         │ IP privada
                         ▼
-                   Cloud SQL PostgreSQL ──► (ELT desde la VM) BigQuery staging → marts ──► Looker Studio
+                   Cloud SQL PostgreSQL ──► (ELT desde la VM) BigQuery staging → marts ──► Data Studio
 ```
 
 Transversales: Cloud Storage (estado Terraform), Secret Manager, Cloud Logging/Monitoring, Billing Budget, IAM de mínimo privilegio y Workload Identity Federation para GitHub Actions.
@@ -140,3 +140,4 @@ Responsabilidad compartida: documentación, seguridad, revisión de cambios y su
 - Tablero de trabajo (Trello): https://trello.com/b/p78Xemzg/servicios-cloud-grupo-2 — una tarjeta por responsabilidad con sus subtareas.
 - Laboratorios del curso: https://github.com/ThiagoIcochea/labs-servicios-cloud
 - Landing de prueba (GitHub Pages): https://thiagoicochea.github.io/crm-cloud-makip/
+- Dashboard comercial (Data Studio): https://datastudio.google.com/reporting/7d01ac4d-e6be-4b8d-b3dc-bf8c10090b89 — KPIs de pedidos, ventas, pipeline y conversión, y segmentación de clientes.
