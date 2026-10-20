@@ -40,6 +40,10 @@ export function textoOportunidad(c) {
   ].filter((l, i, a) => l !== '' || a[i - 1] !== '').join('\n');
 }
 
+const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+// Odoo 17+ guarda la descripción como HTML: cada línea va en su propio párrafo.
+export const comoHtml = (texto) => texto.split('\n').map((l) => (l ? `<p>${esc(l)}</p>` : '<p><br></p>')).join('');
+
 export function crearRegistro({ odoo }) {
   const cache = {};
   async function idPorNombre(model, name, crear) {
@@ -60,10 +64,15 @@ export function crearRegistro({ odoo }) {
     const vals = {
       name: `Consulta web – ${c.nombre} (${c.items.length} producto${c.items.length > 1 ? 's' : ''})`,
       type: 'opportunity', partner_id: partner, contact_name: c.nombre, phone: c.telefono,
-      expected_revenue: c.total, description: textoOportunidad(c), tag_ids: [[6, 0, [tag]]],
+      expected_revenue: c.total, description: comoHtml(textoOportunidad(c)), tag_ids: [[6, 0, [tag]]],
     };
     if (etapa) vals.stage_id = etapa;
-    if (equipo) vals.team_id = equipo;
+    if (equipo) {
+      vals.team_id = equipo;
+      // La consulta queda asignada a la responsable del equipo de ventas (no al usuario técnico de la API).
+      const [t] = await odoo.call('crm.team', 'read', [[equipo]], { fields: ['user_id'] });
+      if (t && Array.isArray(t.user_id)) vals.user_id = t.user_id[0];
+    }
     const id = await odoo.call('crm.lead', 'create', [vals]);
     return { ref: `MK-${String(id).padStart(4, '0')}`, total: c.total };
   };
@@ -99,7 +108,7 @@ export function crearRegistroReclamo({ odoo }) {
     ].join('\n');
     const id = await odoo.call('crm.lead', 'create', [{
       name: `${r.tipo} – ${r.nombre}`, type: 'lead', contact_name: r.nombre, phone: r.telefono, email_from: r.correo,
-      description: texto, tag_ids: [[6, 0, [tag]]], priority: '3',
+      description: comoHtml(texto), tag_ids: [[6, 0, [tag]]], priority: '3',
     }]);
     return { ref: `LR-${String(id).padStart(5, '0')}` };
   };
