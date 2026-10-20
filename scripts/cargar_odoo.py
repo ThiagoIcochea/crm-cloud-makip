@@ -119,6 +119,10 @@ def main():
         tarifas = o.search("product.pricelist", [], context={"active_test": False})
         if tarifas:
             o("product.pricelist", "write", tarifas, {"currency_id": pen, "name": "Tarifa Makip (S/)"})
+            otras = o.search("sale.order", [["currency_id", "!=", pen]])
+            if otras:  # cotizaciones creadas antes del cambio de moneda
+                o("sale.order", "write", otras, {"pricelist_id": tarifas[0]})
+                o("sale.order", "write", otras, {"currency_id": pen})
     print("Empresa: Makip Te Crea (Lima, PEN)")
 
     # ---------- Equipo comercial (usuarios internos sin acceso por contraseña) ----------
