@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <svg class="sprite" width="0" height="0" aria-hidden="true">
     <symbol id="i-bag" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" d="M5 8h14l-1.2 11.1a2 2 0 0 1-2 1.9H8.2a2 2 0 0 1-2-1.9L5 8Zm4 0V6.5a3 3 0 0 1 6 0V8"/></symbol>
     <symbol id="i-plus" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 5v14M5 12h14"/></symbol>
     <symbol id="i-minus" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M5 12h14"/></symbol>
@@ -26,9 +26,12 @@
     <symbol id="i-store" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="M4 10v10h16V10M3 10l2-6h14l2 6zM9 20v-6h6v6"/></symbol>
     <symbol id="i-check" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" d="m5 12.5 4.5 4.5L19 7.5"/></symbol>
     <symbol id="i-book" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3zM5 17a3 3 0 0 1 3-3h11"/></symbol>
+    <symbol id="i-tiktok" viewBox="0 0 24 24"><path fill="currentColor" d="M16.6 3c.3 2.1 1.6 3.5 3.7 3.7v3.1a7 7 0 0 1-3.7-1.1v6.2A5.9 5.9 0 1 1 10.7 9v3.2a2.7 2.7 0 1 0 2.7 2.7V3h3.2z"/></symbol>
+    <symbol id="i-instagram" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="12" cy="12" r="3.9" fill="none" stroke="currentColor" stroke-width="1.8"/><circle cx="17.2" cy="6.8" r="1.1" fill="currentColor"/></symbol>
+    <symbol id="i-facebook" viewBox="0 0 24 24"><path fill="currentColor" d="M13.4 21v-7.6h2.6l.4-3h-3V8.5c0-.9.3-1.5 1.5-1.5h1.6V4.3c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.2H7.7v3h2.6V21h3.1z"/></symbol>
   </svg>
 
-  <header class="top">
+  <header class="top" aria-label="Encabezado del sitio">
     <div class="top-in">
       <a class="brand" href="#inicio" aria-label="Makip Te Crea, inicio">
         <img class="logo" src="assets/logo-makip.svg" alt="Makip Te Crea" width="86" height="48">
@@ -99,16 +102,21 @@
       <div class="foot-brand">
         <img class="logo" src="assets/logo-makip.svg" alt="Makip Te Crea" width="129" height="72">
         <p>Productos personalizados para el colegio, las fiestas y los emprendimientos. Hechos a pedido en Lima.</p>
-        <button class="wa-icon" type="button" data-wa-general aria-label="Escribir a Makip Te Crea por WhatsApp" title="Escribir por WhatsApp"><svg><use href="#i-wa"/></svg></button>
+        <div class="redes">
+          <button class="red red-wa" type="button" data-wa-general aria-label="Escribir a Makip Te Crea por WhatsApp" title="WhatsApp"><svg><use href="#i-wa"/></svg></button>
+          <a class="red" href="https://www.tiktok.com/@makip.tecrea" target="_blank" rel="noopener" aria-label="Makip Te Crea en TikTok" title="TikTok"><svg><use href="#i-tiktok"/></svg></a>
+          <a class="red" href="https://www.instagram.com/makiptecrea/" target="_blank" rel="noopener" aria-label="Makip Te Crea en Instagram" title="Instagram"><svg><use href="#i-instagram"/></svg></a>
+          <a class="red" href="https://www.facebook.com/MakipCREA" target="_blank" rel="noopener" aria-label="Makip Te Crea en Facebook" title="Facebook"><svg><use href="#i-facebook"/></svg></a>
+        </div>
       </div>
       <div>
         <h3>Atención</h3>
         <ul>
           <li>Atención y cotizaciones por WhatsApp</li>
-          <li>Lima, Perú</li>
+          <li>Taller en Lima, Perú</li>
+          <li>Pedidos con nombres para colegios, fiestas y emprendimientos</li>
           <li>Pagos: adelanto del 50 % y saldo antes de la entrega</li>
         </ul>
-        <div class="social"></div>
       </div>
       <div>
         <h3>Información legal</h3>
@@ -122,7 +130,7 @@
     </div>
     <div class="foot-legal">
       <p>© <span id="year"></span> Makip Te Crea. Precios en soles (S/), referenciales hasta la cotización. Conforme al Código de Protección y Defensa del Consumidor (Ley N.° 29571) y a la Ley de Protección de Datos Personales (Ley N.° 29733).</p>
-      <p class="proveedor"></p>
+      <p class="proveedor">MAKIP TE CREA E.I.R.L. · RUC 20608602811 · Santa Rosa, Lima, Perú</p>
       <p class="credit">Catálogo publicado desde Odoo CRM en Google Cloud · Proyecto Servicios Cloud, UTP, sección 45104</p>
     </div>
   </footer>
@@ -135,7 +143,7 @@
 
   <dialog class="sheet" aria-labelledby="sheet-title">
     <form class="sheet-form" method="dialog" novalidate>
-      <header class="sheet-head">
+      <header class="sheet-head" aria-label="Encabezado de la lista de pedido">
         <div>
           <h2 id="sheet-title">Tu lista de pedido</h2>
           <p class="sheet-sub">Revisa las cantidades y déjanos tus datos para cotizar por WhatsApp.</p>
@@ -148,7 +156,7 @@
       <fieldset>
         <legend>Tus datos</legend>
         <div class="row">
-          <label>Nombre y apellido<input name="nombre" autocomplete="name" required maxlength="80"></label>
+          <label>Nombre y apellido<input type="text" name="nombre" autocomplete="name" required maxlength="80"></label>
           <label>Celular<input name="telefono" type="tel" autocomplete="tel" required inputmode="tel" maxlength="20" placeholder="9XX XXX XXX"></label>
         </div>
         <div class="seg" role="radiogroup" aria-label="Entrega">
@@ -156,7 +164,7 @@
           <label><input type="radio" name="entrega" value="delivery"><span><svg><use href="#i-truck"/></svg>Delivery en Lima</span></label>
         </div>
         <div class="row">
-          <label class="distrito" hidden>Distrito<input name="distrito" maxlength="60"></label>
+          <label class="distrito" hidden>Distrito<input type="text" name="distrito" maxlength="60"></label>
           <label>Fecha en que lo necesitas <small>opcional</small><input name="fecha" type="date"></label>
         </div>
         <label>Personalización <small>nombres, colores, temática</small><textarea name="detalle" rows="3" maxlength="500" placeholder="Ej.: 24 nombres para el aula 3.° B en rosado y lila"></textarea></label>
@@ -171,9 +179,10 @@
 
   <template id="card">
     <article class="card">
-      <div class="thumb"><img loading="lazy" alt="" width="400" height="400"></div>
+      <div class="thumb"><!-- [html-validate-disable-next element-required-attributes -- el src lo asigna app.js] --><img loading="lazy" alt="" width="400" height="400"></div>
       <div class="card-body">
         <p class="cat"></p>
+        <!-- [html-validate-disable-next empty-heading -- el nombre lo asigna app.js] -->
         <h3></h3>
         <p class="desc"></p>
         <p class="price"></p>

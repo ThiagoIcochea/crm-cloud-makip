@@ -214,14 +214,6 @@
 
   $$('[data-wa-general]').forEach((b) => b.addEventListener('click', () => abrirWhatsApp('Hola, Makip Te Crea 👋\nVi su catálogo y quisiera cotizar un producto personalizado.')));
   $('#year').textContent = new Date().getFullYear();
-  const prov = cfg.proveedor || {};
-  if (prov.razonSocial || prov.ruc) $('.proveedor').textContent = `Proveedor: ${[prov.razonSocial, prov.ruc && `RUC ${prov.ruc}`, prov.direccion].filter(Boolean).join(', ')}.`;
-  for (const [k, url] of Object.entries(cfg.social || {})) {
-    if (!url) continue;
-    const a = document.createElement('a');
-    a.href = url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = { tiktok: 'TikTok', instagram: 'Instagram', facebook: 'Facebook' }[k] || k;
-    $('.social').appendChild(a);
-  }
   restaurar();
   load();
 })();

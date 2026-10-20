@@ -6,18 +6,18 @@ window.MAKIP_CONFIG = {
   // URL base de la API de catálogo (Cloud Run). Vacío = mismo dominio (/api/catalogo).
   apiBase: '',
 
-  // Redes sociales de la empresa (completar con los enlaces oficiales).
+  // Redes sociales oficiales (también enlazadas en el pie de index.html).
   social: {
-    tiktok: '',
-    instagram: '',
-    facebook: '',
+    tiktok: 'https://www.tiktok.com/@makip.tecrea',
+    instagram: 'https://www.instagram.com/makiptecrea/',
+    facebook: 'https://www.facebook.com/MakipCREA',
   },
 
   // Datos del proveedor exigidos por el Código de Protección y Defensa del Consumidor (completar con los datos reales).
   proveedor: {
-    razonSocial: '', // p. ej. 'Makip Te Crea E.I.R.L.'
-    ruc: '',
-    direccion: '',
+    razonSocial: 'MAKIP TE CREA E.I.R.L.',
+    ruc: '20608602811',
+    direccion: 'Santa Rosa, Lima, Perú',
   },
 
   // Datos de demostración cuando la API no responde (solo desarrollo).
