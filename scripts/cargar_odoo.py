@@ -61,6 +61,14 @@ class Odoo:
     def __call__(self, model, method, *args, **kw):
         return self.m.execute_kw(self.db, self.uid, self.password, model, method, list(args), kw)
 
+    def accion(self, model, method, ids, **kw):
+        """Llama un botón de Odoo; algunos devuelven None, que XML-RPC no serializa."""
+        try:
+            return self(model, method, ids, **kw)
+        except xmlrpc.client.Fault as e:
+            if "cannot marshal None" not in e.faultString:
+                raise
+
     def search(self, model, domain, **kw):
         return self(model, "search", domain, **kw)
 
@@ -125,12 +133,12 @@ def main():
             for so in o("sale.order", "read", otras, ["state", "date_order"]):
                 confirmada = so["state"] == "sale"
                 if confirmada:
-                    o("sale.order", "action_cancel", [so["id"]], context={"disable_cancel_warning": True})
-                    o("sale.order", "action_draft", [so["id"]])
+                    o.accion("sale.order", "action_cancel", [so["id"]], context={"disable_cancel_warning": True})
+                    o.accion("sale.order", "action_draft", [so["id"]])
                 o("sale.order", "write", [so["id"]], {"pricelist_id": tarifas[0]})
-                o("sale.order", "action_update_prices", [so["id"]])
+                o.accion("sale.order", "action_update_prices", [so["id"]])
                 if confirmada:
-                    o("sale.order", "action_confirm", [so["id"]])
+                    o.accion("sale.order", "action_confirm", [so["id"]])
                 o("sale.order", "write", [so["id"]], {"date_order": so["date_order"]})
             if otras:
                 print(f"{len(otras)} cotizaciones pasadas a soles")
