@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es-PE">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Libro de Reclamaciones — Makip Te Crea</title>
+  <link rel="icon" href="assets/logo-makip.jpg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="top"><div class="top-in">
+    <a class="brand" href="index.html"><img src="assets/logo-makip.jpg" alt="" width="40" height="40"><span>Makip Te Crea</span></a>
+    <nav aria-label="Principal"><a href="index.html#catalogo">Catálogo</a><a href="terminos.html">Términos</a><a href="privacidad.html">Privacidad</a><a href="libro-reclamaciones.html">Libro de Reclamaciones</a></nav>
+  </div></header>
+  <main class="legal">
+    <h1>Libro de Reclamaciones</h1>
+    <p>Conforme al Código de Protección y Defensa del Consumidor (Ley N.° 29571) y al Reglamento del Libro de Reclamaciones (D.S. N.° 011-2011-PCM y modificatorias). Responderemos en un plazo máximo de <strong>15 días hábiles</strong>.</p>
+    <p class="updated">Proveedor: Makip Te Crea · Lima, Perú <span class="prov-extra"></span></p>
+    <form class="lr" novalidate>
+      <fieldset>
+        <legend>1. Identificación del consumidor</legend>
+        <div class="row"><label>Nombres y apellidos<input name="nombre" required maxlength="100"></label>
+          <label>Tipo y N.° de documento<input name="documento" required maxlength="20" placeholder="DNI 12345678"></label></div>
+        <label>Domicilio<input name="domicilio" required maxlength="150"></label>
+        <div class="row"><label>Celular<input name="telefono" type="tel" required maxlength="20"></label>
+          <label>Correo electrónico<input name="correo" type="email" required maxlength="100"></label></div>
+        <label class="consent"><input type="checkbox" name="menor"> <span>Soy madre, padre o apoderado y presento el reclamo por un menor de edad</span></label>
+      </fieldset>
+      <fieldset>
+        <legend>2. Identificación del bien contratado</legend>
+        <div class="radios" role="radiogroup"><label><input type="radio" name="bien" value="Producto" checked> Producto</label><label><input type="radio" name="bien" value="Servicio"> Servicio</label></div>
+        <div class="row"><label>Monto reclamado (S/)<input name="monto" type="number" min="0" step="0.01"></label>
+          <label>N.° de pedido o consulta <small>opcional</small><input name="pedido" maxlength="20" placeholder="MK-0012"></label></div>
+        <label>Descripción del producto o servicio<input name="descripcion" required maxlength="200"></label>
+      </fieldset>
+      <fieldset>
+        <legend>3. Detalle de la reclamación</legend>
+        <div class="radios" role="radiogroup">
+          <label><input type="radio" name="tipo" value="Reclamo" checked> Reclamo: disconformidad con el producto o servicio</label>
+          <label><input type="radio" name="tipo" value="Queja"> Queja: disconformidad con la atención</label>
+        </div>
+        <label>Detalle<textarea name="detalle" rows="4" required maxlength="1500"></textarea></label>
+        <label>Pedido del consumidor<textarea name="solicitud" rows="2" required maxlength="500"></textarea></label>
+      </fieldset>
+      <label class="consent"><input type="checkbox" name="acepto" required> <span>Declaro que los datos son verdaderos y acepto su tratamiento para atender este reclamo, según la <a href="privacidad.html">Política de privacidad</a>.</span></label>
+      <p class="form-error" role="alert"></p>
+      <button class="btn btn-dark" type="submit">Registrar reclamación</button>
+    </form>
+    <section class="hoja" hidden>
+      <h2>Hoja de reclamación <span class="num"></span></h2>
+      <p>Guarda o imprime esta hoja. Te enviaremos la respuesta al correo y al celular registrados en un plazo máximo de 15 días hábiles.</p>
+      <dl></dl>
+      <p style="margin-top:1rem;display:flex;gap:.6rem;flex-wrap:wrap"><button class="btn btn-dark" type="button" onclick="print()">Imprimir o guardar en PDF</button> <a class="btn btn-wa wa-send" target="_blank" rel="noopener">Enviar copia por WhatsApp</a></p>
+    </section>
+    <p class="hint" style="margin-top:1.5rem">La formulación del reclamo no impide acudir a otras vías de solución de controversias ni es requisito previo para interponer una denuncia ante el INDECOPI.</p>
+  <script src="config.js"></script>
+  <script>
+  (() => {
+    const cfg = window.MAKIP_CONFIG || {}; const f = document.querySelector('.lr'); const err = f.querySelector('.form-error');
+    const prov = cfg.proveedor || {}; document.querySelector('.prov-extra').textContent = [prov.razonSocial, prov.ruc && 'RUC ' + prov.ruc, prov.direccion].filter(Boolean).join(' · ');
+    f.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const d = Object.fromEntries(new FormData(f));
+      const falta = [...f.querySelectorAll('[required]')].find((i) => (i.type === 'checkbox' ? !i.checked : !i.value.trim()));
+      if (falta) { err.textContent = 'Completa los campos obligatorios y acepta la declaración.'; falta.focus(); return; }
+      err.textContent = '';
+      const fecha = new Date().toLocaleString('es-PE', { timeZone: 'America/Lima' });
+      let num = null;
+      try { const r = await fetch((cfg.apiBase || '') + '/api/reclamos', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(d) }); if (r.ok) num = (await r.json()).ref; } catch {}
+      num = num || 'LR-' + new Date().toISOString().replace(/\D/g, '').slice(2, 12);
+      const filas = [['N.° de hoja', num], ['Fecha', fecha], ['Consumidor', d.nombre], ['Documento', d.documento], ['Domicilio', d.domicilio], ['Celular', d.telefono], ['Correo', d.correo], ['Menor de edad', d.menor ? 'Sí, presentado por apoderado' : 'No'], ['Bien contratado', d.bien + ': ' + d.descripcion], ['Monto reclamado', d.monto ? 'S/ ' + Number(d.monto).toFixed(2) : '—'], ['Pedido', d.pedido || '—'], ['Tipo', d.tipo], ['Detalle', d.detalle], ['Pedido del consumidor', d.solicitud]];
+      const dl = document.querySelector('.hoja dl'); dl.textContent = '';
+      for (const [k, v] of filas) { const dt = document.createElement('dt'); dt.textContent = k; const dd = document.createElement('dd'); dd.textContent = v; dl.append(dt, dd); }
+      document.querySelector('.hoja .num').textContent = num;
+      const n = (cfg.whatsappNumber || '').replace(/\D/g, '');
+      document.querySelector('.wa-send').href = `https://wa.me/${n}?text=${encodeURIComponent('Libro de Reclamaciones - ' + num + '\n' + filas.map(([k, v]) => k + ': ' + v).join('\n'))}`;
+      f.hidden = true; document.querySelector('.hoja').hidden = false; document.querySelector('.hoja').scrollIntoView({ behavior: 'smooth' });
+    });
+  })();
+  </script>
+  </main>
+  <footer class="foot"><div class="foot-legal"><p>© 2026 Makip Te Crea · Lima, Perú. <a href="terminos.html">Términos y condiciones</a> · <a href="privacidad.html">Política de privacidad</a> · <a href="libro-reclamaciones.html">Libro de Reclamaciones</a></p></div></footer>
+</body>
+</html>

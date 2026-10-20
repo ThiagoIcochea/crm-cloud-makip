@@ -4,7 +4,7 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { createOdooClient, OdooError } from './odoo.js';
 import { createCatalog, imageMime, DEFAULT_DOMAIN } from './catalog.js';
-import { validarConsulta, crearRegistro, ConsultaInvalida } from './consultas.js';
+import { validarConsulta, crearRegistro, ConsultaInvalida, validarReclamo, crearRegistroReclamo } from './consultas.js';
 
 const MIME = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
   '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.svg': 'image/svg+xml', '.ico': 'image/x-icon', '.webp': 'image/webp' };
@@ -32,7 +32,7 @@ function leerJson(req, max = 16_384) {
   });
 }
 
-export function createApp({ catalog, allowedOrigins = [], staticDir = '', registrar = null, limitePorMinuto = 6 }) {
+export function createApp({ catalog, allowedOrigins = [], staticDir = '', registrar = null, registrarReclamo = null, limitePorMinuto = 6 }) {
   const intentos = new Map(); // límite simple por IP para evitar abuso del formulario
   const log = (severity, message, extra = {}) =>
     console.log(JSON.stringify({ severity, message, ...extra })); // formato estructurado para Cloud Logging
@@ -74,6 +74,16 @@ export function createApp({ catalog, allowedOrigins = [], staticDir = '', regist
           const consulta = validarConsulta(await leerJson(req), productos);
           const r = await registrar(consulta);
           log('INFO', 'consulta registrada', { ref: r.ref, items: consulta.items.length });
+          return send(res, 201, r);
+        } catch (err) {
+          if (err instanceof ConsultaInvalida) return send(res, 400, { error: err.message });
+          throw err;
+        }
+      }
+      if (req.method === 'POST' && url.pathname === '/api/reclamos' && registrarReclamo) {
+        try {
+          const r = await registrarReclamo(validarReclamo(await leerJson(req)));
+          log('INFO', 'reclamo registrado', { ref: r.ref });
           return send(res, 201, r);
         } catch (err) {
           if (err instanceof ConsultaInvalida) return send(res, 400, { error: err.message });
@@ -123,5 +133,5 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   const catalog = createCatalog({ odoo, domain, ttlMs: Number(env.CACHE_TTL_MS || 300_000) });
   const allowedOrigins = (env.ALLOWED_ORIGINS || 'http://localhost:3000').split(',').map((s) => s.trim());
   const port = Number(env.PORT || 8080);
-  createApp({ catalog, allowedOrigins, staticDir: env.STATIC_DIR || '', registrar: crearRegistro({ odoo }) }).listen(port, () => console.log(`API de catálogo en :${port}`));
+  createApp({ catalog, allowedOrigins, staticDir: env.STATIC_DIR || '', registrar: crearRegistro({ odoo }), registrarReclamo: crearRegistroReclamo({ odoo }) }).listen(port, () => console.log(`API de catálogo en :${port}`));
 }

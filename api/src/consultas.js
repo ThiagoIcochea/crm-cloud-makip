@@ -68,3 +68,39 @@ export function crearRegistro({ odoo }) {
     return { ref: `MK-${String(id).padStart(4, '0')}`, total: c.total };
   };
 }
+
+// ---------- Libro de Reclamaciones virtual ----------
+export function validarReclamo(b) {
+  if (!b || typeof b !== 'object') throw new ConsultaInvalida('Datos inválidos');
+  const r = {
+    nombre: limpiar(b.nombre, 100), documento: limpiar(b.documento, 20), domicilio: limpiar(b.domicilio, 150),
+    telefono: limpiar(b.telefono, 20), correo: limpiar(b.correo, 100), menor: Boolean(b.menor),
+    bien: b.bien === 'Servicio' ? 'Servicio' : 'Producto', monto: Number(b.monto) > 0 ? Math.round(Number(b.monto) * 100) / 100 : 0,
+    pedido: limpiar(b.pedido, 20), descripcion: limpiar(b.descripcion, 200),
+    tipo: b.tipo === 'Queja' ? 'Queja' : 'Reclamo', detalle: limpiar(b.detalle, 1500), solicitud: limpiar(b.solicitud, 500),
+  };
+  for (const k of ['nombre', 'documento', 'domicilio', 'telefono', 'correo', 'descripcion', 'detalle', 'solicitud']) {
+    if (!r[k]) throw new ConsultaInvalida('Completa los campos obligatorios');
+  }
+  if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(r.correo)) throw new ConsultaInvalida('Correo inválido');
+  return r;
+}
+
+export function crearRegistroReclamo({ odoo }) {
+  return async function registrar(r) {
+    const tags = await odoo.call('crm.tag', 'search', [[['name', '=', 'Libro de Reclamaciones']]], { limit: 1 });
+    const tag = tags[0] || (await odoo.call('crm.tag', 'create', [{ name: 'Libro de Reclamaciones' }]));
+    const texto = [
+      `${r.tipo} registrado en el Libro de Reclamaciones virtual (plazo de respuesta: 15 días hábiles).`,
+      `Consumidor: ${r.nombre} · ${r.documento} · ${r.domicilio}`, `Contacto: ${r.telefono} · ${r.correo}`,
+      `Menor de edad: ${r.menor ? 'sí (apoderado)' : 'no'}`,
+      `${r.bien}: ${r.descripcion} · Monto: S/ ${r.monto.toFixed(2)} · Pedido: ${r.pedido || '—'}`,
+      `Detalle: ${r.detalle}`, `Pedido del consumidor: ${r.solicitud}`,
+    ].join('\n');
+    const id = await odoo.call('crm.lead', 'create', [{
+      name: `${r.tipo} – ${r.nombre}`, type: 'lead', contact_name: r.nombre, phone: r.telefono, email_from: r.correo,
+      description: texto, tag_ids: [[6, 0, [tag]]], priority: '3',
+    }]);
+    return { ref: `LR-${String(id).padStart(5, '0')}` };
+  };
+}

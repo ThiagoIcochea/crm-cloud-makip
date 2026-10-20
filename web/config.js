@@ -13,6 +13,13 @@ window.MAKIP_CONFIG = {
     facebook: '',
   },
 
+  // Datos del proveedor exigidos por el Código de Protección y Defensa del Consumidor (completar con los datos reales).
+  proveedor: {
+    razonSocial: '', // p. ej. 'Makip Te Crea E.I.R.L.'
+    ruc: '',
+    direccion: '',
+  },
+
   // Datos de demostración cuando la API no responde (solo desarrollo).
   useDemoFallback: true,
 };

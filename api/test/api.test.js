@@ -146,3 +146,11 @@ test('POST /api/consultas responde 201 y limita abusos', async () => {
     assert.equal(r.status, 429);
   });
 });
+
+import { validarReclamo } from '../src/consultas.js';
+test('valida la hoja del Libro de Reclamaciones', () => {
+  const base = { nombre: 'Ana Ruiz', documento: 'DNI 12345678', domicilio: 'Av. Lima 123', telefono: '987654321', correo: 'ana@correo.pe', descripcion: 'Reglas', detalle: 'Llegó rota', solicitud: 'Reposición' };
+  assert.equal(validarReclamo({ ...base, tipo: 'Queja' }).tipo, 'Queja');
+  assert.throws(() => validarReclamo({ ...base, correo: 'x' }));
+  assert.throws(() => validarReclamo({ ...base, detalle: '' }));
+});
