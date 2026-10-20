@@ -68,6 +68,10 @@ resource "google_cloud_run_v2_service" "catalog_api" {
         value = var.odoo_api_user
       }
       env {
+        name  = "STATIC_DIR"
+        value = "/app/web" # la imagen incluye la landing (Dockerfile raíz)
+      }
+      env {
         name  = "ALLOWED_ORIGINS"
         value = join(",", var.allowed_origins)
       }

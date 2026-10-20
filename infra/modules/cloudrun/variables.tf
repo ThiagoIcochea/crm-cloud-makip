@@ -13,9 +13,9 @@ variable "odoo_db" {
 }
 
 variable "odoo_api_mode" {
-  description = "json2 (Odoo 19+) o jsonrpc. Confirmar en la PoC."
+  description = "jsonrpc (validado en la PoC con Odoo 19 y usuario técnico) o json2 (clave de API)"
   type        = string
-  default     = "json2"
+  default     = "jsonrpc"
 }
 
 variable "odoo_api_user" {
