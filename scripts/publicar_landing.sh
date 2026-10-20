@@ -18,5 +18,5 @@ gcloud run deploy "$SERVICE" --image "$IMAGE" --region "$REGION" \
 URL="$(gcloud run services describe "$SERVICE" --region "$REGION" --format='value(status.url)')"
 
 paso "6) Verificación"
-curl -s "$URL/healthz"; echo
+curl -s "$URL/api/salud"; echo
 curl -s "$URL/api/catalogo" | python3 -c 'import json,sys; d=json.load(sys.stdin); p=d["productos"]; print(len(p), "productos publicados desde Odoo"); [print(" -", x["codigo"], x["nombre"], x["precio"]) for x in p[:5]]'

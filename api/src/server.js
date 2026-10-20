@@ -55,7 +55,8 @@ export function createApp({ catalog, allowedOrigins = [], staticDir = '' }) {
       }
       if (req.method !== 'GET') return send(res, 405, { error: 'Método no permitido' });
 
-      if (url.pathname === '/healthz') return send(res, 200, { ok: true });
+      // Cloud Run reserva las rutas que terminan en "z" (p. ej. /healthz); se usa /api/salud para el uptime check.
+      if (url.pathname === '/healthz' || url.pathname === '/api/salud') return send(res, 200, { ok: true, servicio: 'catalogo-makip' });
 
       if (url.pathname === '/api/catalogo') {
         const data = await catalog.list();

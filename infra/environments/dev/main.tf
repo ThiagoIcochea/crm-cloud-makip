@@ -123,7 +123,7 @@ module "observability" {
   billing_account   = var.billing_account
   uptime_targets = {
     landing    = { enabled = var.custom_domain != "", host = var.custom_domain, path = "/" }
-    api        = { enabled = true, host = trimprefix(module.cloudrun.service_url, "https://"), path = "/healthz" }
+    api        = { enabled = true, host = trimprefix(module.cloudrun.service_url, "https://"), path = "/api/salud" }
     backoffice = { enabled = var.backoffice_domain != "", host = var.backoffice_domain, path = "/web/login" }
   }
 }

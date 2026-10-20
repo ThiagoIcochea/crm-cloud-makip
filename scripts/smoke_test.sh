@@ -12,7 +12,7 @@ check() {
 }
 
 check "landing"          "${LANDING_URL:-}"                  200
-check "api healthz"      "${API_URL:-}${API_URL:+/healthz}"  200
+check "api salud"        "${API_URL:-}${API_URL:+/api/salud}"  200
 check "api catálogo"     "${API_URL:-}${API_URL:+/api/catalogo}" 200
 check "backoffice login" "${BACKOFFICE_URL:-}${BACKOFFICE_URL:+/web/login}" 200
 check "gestor de BD bloqueado" "${BACKOFFICE_URL:-}${BACKOFFICE_URL:+/web/database/manager}" 403
