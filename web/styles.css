@@ -75,6 +75,10 @@ h1, h2, h3 { font-family: var(--display); line-height: 1.08; margin: 0; letter-s
 .btn-line:hover { background: var(--surface); }
 .btn-wa { background: var(--wa); color: #fff; }
 .btn-wa:hover { background: var(--wa-dark); }
+.wa-icon { display: inline-grid; place-items: center; width: 48px; height: 48px; margin-top: .25rem; border: 0; border-radius: 50%; background: var(--wa); color: #fff; cursor: pointer; box-shadow: 0 6px 18px rgba(29,155,86,.35); transition: background-color .15s ease, transform .15s ease; }
+.wa-icon:hover { background: var(--wa-dark); transform: translateY(-1px); }
+.wa-icon:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+.wa-icon svg { width: 24px; height: 24px; fill: currentColor; }
 .icon-btn { display: inline-grid; place-items: center; width: 2.6rem; height: 2.6rem; border-radius: 50%; border: 1.5px solid var(--line); background: var(--paper); color: var(--ink-2); cursor: pointer; }
 .icon-btn:hover { border-color: var(--ink); color: var(--ink); }
 .btn-ask:hover { border-color: var(--wa); color: var(--wa); }
