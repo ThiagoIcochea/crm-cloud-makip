@@ -7,6 +7,11 @@ REGION="southamerica-west1"
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 gcloud config set project "$PROJECT_ID" >/dev/null
 
+echo "==> Tablas creadas por la analítica (bloquean el borrado de los datasets)"
+for t in makip_staging.clientes_odoo makip_marts.segmentacion_clientes; do
+  bq rm -f -t "$PROJECT_ID:$t" 2>/dev/null || true
+done
+
 echo "==> terraform destroy (entorno dev)"
 cd "$REPO_ROOT/infra/environments/dev"
 terraform destroy -auto-approve -input=false
