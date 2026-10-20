@@ -145,6 +145,20 @@ def main():
                 print(f"{len(otras)} cotizaciones pasadas a soles")
     print("Empresa: Makip Te Crea (Lima, PEN)")
 
+    # ---------- IGV 18 % (la plantilla contable genérica trae un impuesto de 15 %) ----------
+    igv = o.search("account.tax", [["type_tax_use", "=", "sale"], ["amount_type", "=", "percent"]], limit=1)
+    if igv:
+        o("account.tax", "write", igv, {"amount": 18.0, "name": "IGV 18%", "description": "IGV 18%"})
+        o("res.company", "write", [1], {"account_sale_tax_id": igv[0]})
+        campo = "tax_ids" if "tax_ids" in o("sale.order.line", "fields_get", [], attributes=["type"]) else "tax_id"
+        lineas = o.search("sale.order.line", [["display_type", "=", False]])
+        if lineas:  # vuelve a asignar el impuesto para que Odoo recalcule los totales
+            try:
+                o("sale.order.line", "write", lineas, {campo: [(6, 0, igv)]})
+            except xmlrpc.client.Fault as e:
+                print("Aviso: no se recalculó el IGV de órdenes existentes:", e.faultString.splitlines()[-1])
+        print(f"IGV 18 % aplicado a {len(lineas)} líneas de venta")
+
     # ---------- Equipo comercial (usuarios internos sin acceso por contraseña) ----------
     vendedores = []
     for nombre, login in EQUIPO:
