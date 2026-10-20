@@ -21,7 +21,7 @@ makiptecrea.pe ──► Firebase Hosting (web/)  ──── CTA ───► 
                    Compute Engine: Odoo Community + Nginx (app/)
                         │ IP privada
                         ▼
-                   Cloud SQL PostgreSQL ──► BigQuery (EXTERNAL_QUERY) ──► Data Studio
+                   Cloud SQL PostgreSQL ──► (ELT desde la VM) BigQuery staging → marts ──► Looker Studio
 ```
 
 Transversales: Cloud Storage (estado Terraform), Secret Manager, Cloud Logging/Monitoring, Billing Budget, IAM de mínimo privilegio y Workload Identity Federation para GitHub Actions.
@@ -82,7 +82,10 @@ El registro automático de la consulta en Odoo (número MK-xxxx) solo funciona e
 ```bash
 bash scripts/probar_gcp.sh TU_ID_DE_PROYECTO && (cd infra/environments/dev && terraform apply tfplan)
 bash scripts/demo_gcp.sh TU_ID_DE_PROYECTO     # carga 43 productos reales, pipeline y datos de prueba; publica la landing
+bash scripts/analitica_bigquery.sh TU_ID_DE_PROYECTO  # segmentación de clientes en makip_marts
 bash scripts/destruir_gcp.sh TU_ID_DE_PROYECTO # elimina todo al terminar
+bash scripts/limpiar_restos_gcp.sh TU_ID_DE_PROYECTO  # solo si destroy se detiene (usuarios de Cloud SQL o IP serverless)
+bash scripts/inventario_gcp.sh TU_ID_DE_PROYECTO      # verifica que no quede nada
 ```
 
 El catálogo real (productos, precios y fotos de Makip Te Crea) está en `app/seed/catalogo/`.
