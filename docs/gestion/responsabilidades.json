@@ -1,0 +1,27 @@
+[
+ {"m": "TR", "persona": "Thiago Paolo Icochea Rodriguez", "rol": "Líder del proyecto · Arquitectura GCP, IaC y CI/CD", "cards": [
+  {"n": "Arquitectura GCP e infraestructura con Terraform", "items": ["Diseñar la arquitectura en southamerica-west1 (red, cómputo, datos y servicios)", "Módulos Terraform: network, security, database, compute, cloudrun, observability y analytics", "Backend remoto del estado en Cloud Storage con versionado", "terraform plan y apply del entorno dev (72 recursos)", "IAM: integrantes como Editor y cuentas de servicio con mínimo privilegio"]},
+  {"n": "Repositorio, CI/CD y despliegue", "items": ["Crear el repositorio crm-cloud-makip y su estructura", "CI en GitHub Actions: Terraform fmt/validate/tflint/checkov, Gitleaks, pruebas de la API y validación HTML", "Publicar la API y la landing en Cloud Run con Cloud Build", "Workflow de GitHub Pages para la landing de prueba", "Scripts probar_gcp, demo_gcp y destruir_gcp"]},
+  {"n": "Cierre del entorno cloud", "items": ["Destruir la infraestructura con terraform destroy", "Eliminar restos (Cloud SQL, peering, IP serverless, VPC) con limpiar_restos_gcp.sh", "Verificar con inventario_gcp.sh que no queden recursos"]}
+ ]},
+ {"m": "CA", "persona": "Carlos Enrique Giussepe Gonzales Aguilar", "rol": "CRM y procesos comerciales (Odoo)", "cards": [
+  {"n": "Configuración de Odoo CRM", "items": ["Datos de la empresa, idioma es_PE, moneda PEN y logo", "Tarifa en soles e IGV 18 % en productos y cotizaciones", "Equipo de ventas con los cinco integrantes", "Pipeline de 12 etapas desde Nueva consulta hasta Entregado", "Carga del catálogo real de 43 productos con fotos y precios"]},
+  {"n": "Flujo comercial y cotizaciones", "items": ["Modelar el flujo: consulta, cotización, adelanto del 50 %, diseño, producción y entrega", "Clientes, oportunidades y cotizaciones de prueba (datos ficticios)", "Validar el registro automático de consultas web en Odoo (MK-xxxx)"]},
+  {"n": "Fidelización de clientes en el CRM", "items": ["Definir segmentos: frecuente, institución/colegio, potencial y por reactivar", "Etiquetas de segmento en los clientes", "Actividades de fidelización asignadas a la vendedora"]}
+ ]},
+ {"m": "EH", "persona": "Eddyson Cesar Huamani Pereira", "rol": "Landing, integración con WhatsApp y API", "cards": [
+  {"n": "Landing y catálogo web", "items": ["Diseño de la landing: encabezado, hero, catálogo con filtros y búsqueda", "Logotipo vectorizado (SVG) y favicon", "Vista móvil y accesibilidad (HTML válido)", "Pie con redes sociales, enlaces legales y datos del proveedor (RUC)"]},
+  {"n": "Pedido por WhatsApp", "items": ["Lista de pedido con cantidades y total referencial", "Formulario: nombre, celular, recojo o delivery, fecha y personalización", "Mensaje estructurado con emojis hacia el WhatsApp de la empresa", "Abrir la app en celular y WhatsApp Web en computadora (sin página intermedia)"]},
+  {"n": "API de catálogo e integración con Odoo", "items": ["API Node.js en Cloud Run que lee el catálogo de Odoo por JSON-RPC", "Endpoint /api/consultas que crea la oportunidad en Odoo", "Límite de envíos por minuto y validación de datos", "Pruebas automáticas de la API"]}
+ ]},
+ {"m": "HT", "persona": "Huber Eduardo Remuzgo Tovar", "rol": "Datos, observabilidad y costos", "cards": [
+  {"n": "Analítica en BigQuery", "items": ["Datasets makip_staging y makip_marts", "Extracción del resumen de clientes desde Odoo (dentro de la VPC)", "Carga en makip_staging.clientes_odoo", "Tabla makip_marts.segmentacion_clientes con la acción sugerida"]},
+  {"n": "Monitoreo y registros", "items": ["Uptime check de la API desde varias regiones", "Políticas de alerta y canal de correo", "Registros estructurados de la API en Cloud Logging", "Revisión de disponibilidad del primer día"]},
+  {"n": "Análisis de costos", "items": ["Estimación mensual con Google Cloud Pricing Calculator", "Comparación con un centro de datos local a tres años", "Recomendaciones de ahorro (apagado de la VM, compromisos de uso)"]}
+ ]},
+ {"m": "KQ", "persona": "Karen Meylin Quispe Saavedra", "rol": "Calidad, aspectos legales y documentación", "cards": [
+  {"n": "Pruebas y control de calidad", "items": ["Plan y casos de prueba del flujo de punta a punta", "Prueba del pedido desde la landing hasta Odoo y WhatsApp", "Verificación de montos en soles e IGV en las cotizaciones", "Registro de evidencias con fecha y hora reales"]},
+  {"n": "Cumplimiento legal de la landing", "items": ["Términos y condiciones (precios referenciales, adelanto, cambios)", "Política de privacidad según la Ley 29733", "Libro de Reclamaciones virtual según la Ley 29571", "Validar los datos del proveedor: MAKIP TE CREA E.I.R.L., RUC 20608602811"]},
+  {"n": "Documento final y presentación", "items": ["Informe según la estructura del Proyecto Final Integrador", "Anexos: repositorio, tablero de Trello y evidencias", "Presentación para la sustentación"]}
+ ]}
+]
