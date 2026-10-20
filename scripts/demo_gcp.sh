@@ -13,6 +13,7 @@ VM="makip-dev-odoo"; SERVICE="makip-dev-catalog-api"
 REPO_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 IMAGE="${REGION}-docker.pkg.dev/${PROJECT_ID}/makip-dev-images/catalogo:$(date +%Y%m%d-%H%M)"
 gcloud config set project "$PROJECT_ID" >/dev/null
+gcloud services enable cloudbuild.googleapis.com --quiet
 
 paso() { printf '\n\033[1;35m▶ %s\033[0m\n' "$*"; }
 
@@ -46,18 +47,9 @@ paso "3) Cargando catálogo real, pipeline y datos de prueba en Odoo"
 python3 "$REPO_ROOT/scripts/cargar_odoo.py" --url http://localhost:8069 --db makip \
   --admin-password "$ACTUAL_ADMIN" --nuevo-admin-password "$ADMIN_PW" --api-password "$API_PW"
 
-paso "4) Construyendo la imagen (API de catálogo + landing) con Cloud Build"
-gcloud builds submit "$REPO_ROOT" --tag "$IMAGE" --region "$REGION"
-
-paso "5) Publicando en Cloud Run: $SERVICE"
-gcloud run deploy "$SERVICE" --image "$IMAGE" --region "$REGION" \
-  --update-env-vars "ODOO_API_MODE=jsonrpc,ODOO_API_USER=api_catalogo,STATIC_DIR=/app/web" \
-  --update-secrets "ODOO_API_KEY=odoo-api-key:latest" --quiet
+bash "$REPO_ROOT/scripts/publicar_landing.sh" "$PROJECT_ID"
 URL="$(gcloud run services describe "$SERVICE" --region "$REGION" --format='value(status.url)')"
 
-paso "6) Verificación"
-curl -s "$URL/healthz"; echo
-curl -s "$URL/api/catalogo" | python3 -c 'import json,sys; d=json.load(sys.stdin); p=d["productos"]; print(len(p), "productos publicados desde Odoo"); [print(" -", x["codigo"], x["nombre"], x["precio"]) for x in p[:5]]'
 cat <<FIN
 
 ============================================================
