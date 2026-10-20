@@ -82,10 +82,21 @@
     $('.dec', el).onclick = () => setCantidad(id, (pedido.get(id) || 0) - 1);
     $('.inc', el).onclick = () => setCantidad(id, (pedido.get(id) || 0) + 1);
   }
+  // La barra es oscura: al pasar sobre el pie (también oscuro) cambia a la versión clara para que se distinga.
+  function contrasteBarra() {
+    const pie = document.querySelector('.foot');
+    if (!pie || bar.hidden) return;
+    const zona = window.innerHeight - bar.offsetHeight / 2 - 16;
+    bar.classList.toggle('sobre-pie', pie.getBoundingClientRect().top < zona);
+  }
+  addEventListener('scroll', contrasteBarra, { passive: true });
+  addEventListener('resize', contrasteBarra);
+
   function actualizar() {
     const unidades = [...pedido.values()].reduce((a, b) => a + b, 0);
     bar.hidden = pedido.size === 0;
     document.body.classList.toggle('has-list', pedido.size > 0);
+    contrasteBarra();
     $$('.list-count').forEach((e) => { e.textContent = unidades; });
     $$('.list-total').forEach((e) => { e.textContent = money.format(total()); });
     $$('.card').forEach((card) => {
