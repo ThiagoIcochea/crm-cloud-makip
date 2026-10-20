@@ -179,8 +179,9 @@ def main():
     api_uid = o.upsert("res.users", [["login", "=", "api_catalogo"]],
                        {"name": "API Catálogo (Cloud Run)", "login": "api_catalogo"})
     o("res.users", "write", [api_uid], {"password": a.api_password})
-    # Puede leer el catálogo y registrar consultas de la landing como oportunidades (rol Ventas: usuario).
-    grupo = o.ref("sales_team.group_sale_salesman")
+    # Lee el catálogo y registra las consultas de la landing como oportunidades asignadas a la
+    # responsable del equipo, por eso necesita el rol Ventas «todos los documentos».
+    grupo = o.ref("sales_team.group_sale_salesman_all_leads")
     campo = "group_ids" if "group_ids" in o("res.users", "fields_get", [], attributes=["type"]) else "groups_id"
     if grupo:
         o("res.users", "write", [api_uid], {campo: [(4, grupo)]})

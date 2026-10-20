@@ -27,14 +27,19 @@
   const restaurar = () => { try { for (const [id, q] of JSON.parse(localStorage.getItem(KEY) || '[]')) pedido.set(Number(id), Number(q)); } catch { /* vacío */ } };
 
   // ---------- WhatsApp ----------
+  // La página intermedia de wa.me y api.whatsapp.com reemplaza los emojis por «�»,
+  // así que en el celular se abre la app directamente y en la computadora WhatsApp Web.
+  const esMovil = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
   function waLink(text) {
     const n = (cfg.whatsappNumber || '').replace(/\D/g, '');
-    // api.whatsapp.com conserva los emojis; el redireccionamiento de wa.me los reemplaza por «�».
-    return n ? `https://api.whatsapp.com/send?phone=${n}&text=${encodeURIComponent(text)}` : null;
+    if (!n) return null;
+    const q = `phone=${n}&text=${encodeURIComponent(text)}`;
+    return esMovil ? `whatsapp://send?${q}` : `https://web.whatsapp.com/send?${q}`;
   }
   function abrirWhatsApp(text, ventana) {
     const url = waLink(text);
     if (!url) return;
+    if (esMovil) { if (ventana && !ventana.closed) ventana.close(); location.href = url; return; }
     if (ventana && !ventana.closed) ventana.location.href = url;
     else if (!window.open(url, '_blank', 'noopener')) location.href = url;
   }
@@ -192,7 +197,7 @@
     if (error) { errorBox.textContent = error; return; }
     errorBox.textContent = '';
     const boton = $('.btn-send', form); boton.disabled = true;
-    const ventana = window.open('', '_blank'); // se abre en el mismo clic para que el navegador no la bloquee
+    const ventana = esMovil ? null : window.open('', '_blank'); // se abre en el mismo clic para que el navegador no la bloquee
     let ref = null;
     try {
       const res = await fetch(api('/api/consultas'), {
