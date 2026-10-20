@@ -201,8 +201,10 @@ def main():
         vals = {"name": p["nombre"], "default_code": p["codigo"], "categ_id": cats[p["categoria"]],
                 "list_price": p["precio"] or 0.0, "description_sale": p["descripcion"], "sale_ok": True,
                 "purchase_ok": False}
-        if not o.search("product.template", [["default_code", "=", p["codigo"]]]):
-            vals["image_1920"] = b64(img)  # la foto se sube solo al crear (el túnel IAP es lento)
+        existe = o("product.template", "search_read", [["default_code", "=", p["codigo"]]],
+                   fields=["image_128"], limit=1)
+        if not existe or not existe[0]["image_128"]:
+            vals["image_1920"] = b64(img)  # la foto se sube solo si el producto aún no tiene
         o.upsert("product.template", [["default_code", "=", p["codigo"]]], vals)
     print(f"Productos cargados: {len(productos)} en {len(cats)} categorías")
 
