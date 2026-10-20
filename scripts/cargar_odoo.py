@@ -154,7 +154,9 @@ def main():
         img = SEED / "catalogo" / "img" / f"{p['imagenes'][0]}.jpg"
         vals = {"name": p["nombre"], "default_code": p["codigo"], "categ_id": cats[p["categoria"]],
                 "list_price": p["precio"] or 0.0, "description_sale": p["descripcion"], "sale_ok": True,
-                "purchase_ok": False, "image_1920": b64(img)}
+                "purchase_ok": False}
+        if not o.search("product.template", [["default_code", "=", p["codigo"]]]):
+            vals["image_1920"] = b64(img)  # la foto se sube solo al crear (el túnel IAP es lento)
         o.upsert("product.template", [["default_code", "=", p["codigo"]]], vals)
     print(f"Productos cargados: {len(productos)} en {len(cats)} categorías")
 
