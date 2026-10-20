@@ -120,9 +120,20 @@ def main():
         if tarifas:
             o("product.pricelist", "write", tarifas, {"currency_id": pen, "name": "Tarifa Makip (S/)"})
             otras = o.search("sale.order", [["currency_id", "!=", pen]])
-            if otras:  # cotizaciones creadas antes del cambio de moneda
-                o("sale.order", "write", otras, {"pricelist_id": tarifas[0]})
-                o("sale.order", "write", otras, {"currency_id": pen})
+            # cotizaciones creadas antes del cambio de moneda: una orden confirmada
+            # no admite otra tarifa, así que vuelve a borrador y se reconfirma con su fecha
+            for so in o("sale.order", "read", otras, ["state", "date_order"]):
+                confirmada = so["state"] == "sale"
+                if confirmada:
+                    o("sale.order", "action_cancel", [so["id"]], context={"disable_cancel_warning": True})
+                    o("sale.order", "action_draft", [so["id"]])
+                o("sale.order", "write", [so["id"]], {"pricelist_id": tarifas[0]})
+                o("sale.order", "action_update_prices", [so["id"]])
+                if confirmada:
+                    o("sale.order", "action_confirm", [so["id"]])
+                o("sale.order", "write", [so["id"]], {"date_order": so["date_order"]})
+            if otras:
+                print(f"{len(otras)} cotizaciones pasadas a soles")
     print("Empresa: Makip Te Crea (Lima, PEN)")
 
     # ---------- Equipo comercial (usuarios internos sin acceso por contraseña) ----------
