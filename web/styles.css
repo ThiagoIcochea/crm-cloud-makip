@@ -158,10 +158,12 @@ body.has-list .foot-legal { padding-bottom: 6.5rem; }
 .list-bar.sobre-pie { background: var(--paper); color: var(--ink); border-color: var(--pink); box-shadow: 0 12px 36px rgb(0 0 0 / .45), 0 0 0 4px rgb(230 0 126 / .25); }
 .list-bar.sobre-pie .lb-count { background: var(--surface); }
 
-.sheet { margin: 0 0 0 auto; height: 100dvh; max-height: none; width: min(520px, 100%); border: 0; padding: 0; background: var(--paper); box-shadow: -20px 0 50px rgb(30 26 51 / .25); }
+.sheet { margin: 0 0 0 auto; height: 100dvh; max-height: 100dvh; width: min(520px, 100%); max-width: 100%; overflow-y: auto; overscroll-behavior: contain; border: 0; padding: 0; background: var(--paper); box-shadow: -20px 0 50px rgb(30 26 51 / .25); }
 .sheet::backdrop { background: rgb(30 26 51 / .45); }
 .sheet[open] { animation: entra .22s ease-out; }
 @keyframes entra { from { transform: translateX(40px); opacity: 0; } }
+@keyframes sube { from { transform: translateY(40px); opacity: 0; } }
+body:has(.sheet[open]) { overflow: hidden; }
 .sheet-form { display: flex; flex-direction: column; gap: 1rem; padding: 1.4rem 1.5rem 1.5rem; min-height: 100%; }
 .sheet-head { display: flex; justify-content: space-between; gap: 1rem; }
 .sheet-head h2 { font-size: 1.6rem; font-weight: 800; }
@@ -180,7 +182,9 @@ body.has-list .foot-legal { padding-bottom: 6.5rem; }
 .hint { margin: -.6rem 0 0; color: var(--muted); font-size: .84rem; }
 .sheet fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: .85rem; }
 .sheet legend { font: 700 1.1rem var(--display); margin-bottom: .6rem; }
-.sheet .row { display: grid; grid-template-columns: 1fr 1fr; gap: .85rem; }
+.sheet .row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: .85rem; }
+.sheet label, .sheet input, .sheet textarea { min-width: 0; max-width: 100%; }
+.sheet input:not([type=radio]):not([type=checkbox]), .sheet textarea { width: 100%; }
 .sheet label { display: flex; flex-direction: column; gap: .3rem; font-weight: 600; font-size: .9rem; }
 .sheet label small { color: var(--muted); font-weight: 500; }
 .sheet input:not([type=radio]):not([type=checkbox]), .sheet textarea { font: 1rem "Figtree", sans-serif; color: var(--ink); border: 1.5px solid var(--line); border-radius: var(--r-sm); padding: .65rem .75rem; background: var(--paper); }
@@ -232,7 +236,9 @@ body.has-list .foot-legal { padding-bottom: 6.5rem; }
   .facts { grid-template-columns: 1fr 1fr 1fr; gap: 1rem; }
   .steps { grid-template-columns: 1fr; }
   .foot-in { grid-template-columns: 1fr; }
-  .sheet { height: 92dvh; margin: auto 0 0; width: 100%; border-radius: 22px 22px 0 0; }
+  .sheet { position: fixed; inset: auto 0 0 0; height: 92dvh; max-height: 92dvh; margin: 0; width: 100%; max-width: 100%; border-radius: 22px 22px 0 0; }
+  .sheet[open] { animation: sube .25s ease-out; }
+  .sheet-form { padding-bottom: calc(1.2rem + env(safe-area-inset-bottom, 0px)); }
   .sheet .row, .seg, .legal .row { grid-template-columns: 1fr; }
   .grid { grid-template-columns: 1fr 1fr; gap: 1.4rem .9rem; }
   .card h3 { font-size: 1.02rem; }
