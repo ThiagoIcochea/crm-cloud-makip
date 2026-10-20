@@ -119,12 +119,24 @@ Dominio `makiptecrea.pe`: S/110/año (aparte). Firebase Hosting y TLS: US$0.00 d
 ## Por completar
 
 - [x] Número de WhatsApp de la empresa en `web/config.js` (+51 923 119 167).
-- [ ] ID de proyecto GCP, cuenta de facturación y correo de alertas en `terraform.tfvars`.
-- [ ] Validar en la PoC el mecanismo de API externa de la versión fijada de Odoo (`ODOO_API_MODE`).
-- [ ] Validar estados operativos en Odoo (Proyecto vs. campo de estado) — ver `docs/pipeline-estados.md`.
+- [x] Validar el modo de API externa de Odoo 19 (`ODOO_API_MODE=jsonrpc`).
+- [x] Datos del proveedor y redes oficiales en `web/config.js` y en el pie de la landing.
+- [ ] Validar con la empresa los términos, la política de privacidad y el plazo de cambios antes de publicar.
 
-## Equipo
+## Equipo y responsabilidades
 
-Icochea Rodriguez, Thiago Paolo · Gonzales Aguilar, Carlos Enrique Giussepe · Huamani Pereira, Eddyson Cesar · Remuzgo Tovar, Huber Eduardo · Quispe Saavedra, Karen Meylin
+Proyecto Final Integrador · Servicios Cloud · Sección 45104 · UTP
 
-Flujo de trabajo: ramas por tarea, Pull Request con revisión de otro integrante, `main` protegida.
+| Integrante | Rol principal | Tareas |
+|---|---|---|
+| Thiago Paolo Icochea Rodriguez | Líder del proyecto · Arquitectura GCP, IaC y CI/CD | Arquitectura GCP e infraestructura con Terraform; Repositorio, CI/CD y despliegue; Cierre del entorno cloud |
+| Carlos Enrique Giussepe Gonzales Aguilar | CRM y procesos comerciales (Odoo) | Configuración de Odoo CRM; Flujo comercial y cotizaciones; Fidelización de clientes en el CRM |
+| Eddyson Cesar Huamani Pereira | Landing, integración con WhatsApp y API | Landing y catálogo web; Pedido por WhatsApp; API de catálogo e integración con Odoo |
+| Huber Eduardo Remuzgo Tovar | Datos, observabilidad y costos | Analítica en BigQuery; Monitoreo y registros; Análisis de costos |
+| Karen Meylin Quispe Saavedra | Calidad, aspectos legales y documentación | Pruebas y control de calidad; Cumplimiento legal de la landing; Documento final y presentación |
+
+Responsabilidad compartida: documentación, seguridad, revisión de cambios y sustentación.
+
+- Tablero de trabajo (Trello): https://trello.com/b/p78Xemzg/servicios-cloud-grupo-2 — una tarjeta por responsabilidad con sus subtareas.
+- Laboratorios del curso: https://github.com/ThiagoIcochea/labs-servicios-cloud
+- Landing de prueba (GitHub Pages): https://thiagoicochea.github.io/crm-cloud-makip/
