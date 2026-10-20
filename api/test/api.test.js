@@ -106,3 +106,43 @@ test('cliente jsonrpc autentica y luego consulta', async () => {
   assert.equal(rows.length, 1);
   assert.equal(bodies[1].params.args[1], 5);
 });
+
+// ---------- Consultas desde la landing ----------
+import { validarConsulta, textoOportunidad, crearRegistro } from '../src/consultas.js';
+
+const PRODS = [{ id: 7, codigo: 'LLA-001', nombre: 'Llavero acrílico', precio: 12.5 }];
+
+test('valida la consulta y toma precios del servidor', () => {
+  const c = validarConsulta({ nombre: ' Ana ', telefono: '987 654 321', entrega: 'delivery', distrito: 'Surco',
+    items: [{ id: 7, cantidad: 3, precio: 0.01 }] }, PRODS);
+  assert.equal(c.nombre, 'Ana');
+  assert.equal(c.total, 37.5);
+  assert.equal(c.items[0].precio, 12.5);
+  assert.match(textoOportunidad(c), /delivery a Surco/);
+  assert.throws(() => validarConsulta({ nombre: 'A', telefono: '1', items: [] }, PRODS));
+  assert.throws(() => validarConsulta({ nombre: 'Ana', telefono: '987654321', items: [{ id: 99 }] }, PRODS));
+});
+
+test('registra la oportunidad en el CRM con referencia MK', async () => {
+  const calls = [];
+  const odoo = { async call(model, method, args) { calls.push([model, method]); return method === 'search' ? [] : 12; } };
+  const r = await crearRegistro({ odoo })(validarConsulta({ nombre: 'Ana', telefono: '987654321', items: [{ id: 7, cantidad: 2 }] }, PRODS));
+  assert.equal(r.ref, 'MK-0012');
+  assert.ok(calls.some(([m, f]) => m === 'crm.lead' && f === 'create'));
+});
+
+test('POST /api/consultas responde 201 y limita abusos', async () => {
+  const catalog = { list: async () => ({ productos: PRODS }), image: async () => null };
+  const app = createApp({ catalog, registrar: async (c) => ({ ref: 'MK-0001', total: c.total }), limitePorMinuto: 2 });
+  await withServer(app, async (base) => {
+    const body = JSON.stringify({ nombre: 'Ana', telefono: '987654321', items: [{ id: 7, cantidad: 1 }] });
+    const opts = { method: 'POST', headers: { 'Content-Type': 'application/json' }, body };
+    let r = await fetch(base + '/api/consultas', opts);
+    assert.equal(r.status, 201);
+    assert.equal((await r.json()).ref, 'MK-0001');
+    r = await fetch(base + '/api/consultas', { ...opts, body: '{"nombre":"x"}' });
+    assert.equal(r.status, 400);
+    r = await fetch(base + '/api/consultas', opts);
+    assert.equal(r.status, 429);
+  });
+});

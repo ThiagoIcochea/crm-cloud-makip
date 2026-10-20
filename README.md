@@ -71,6 +71,12 @@ bash scripts/probar_gcp.sh TU_ID_DE_PROYECTO   # init + validate + plan, sin cos
 
 Guía completa (crear, verificar, abrir Odoo por túnel IAP y destruir): [`docs/probar-gcp.md`](docs/probar-gcp.md).
 
+### Landing de prueba en GitHub Pages
+
+Cada cambio en `web/` o en el catálogo publica una versión estática de prueba en GitHub Pages (workflow `pages.yml`):
+catálogo real con fotos y precios, selección de varios productos y envío del pedido por WhatsApp con emojis.
+El registro automático de la consulta en Odoo (número MK-xxxx) solo funciona en la versión desplegada en Google Cloud.
+
 ### Demostración completa (catálogo real en Odoo + landing en Cloud Run)
 
 ```bash

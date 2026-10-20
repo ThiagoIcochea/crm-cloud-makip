@@ -43,6 +43,21 @@ export function createOdooClient({ url, db, apiKey, mode = 'json2', user = '', t
     return data.result;
   }
 
+  // Llamada genérica (create, search, write…) para registrar consultas de la landing en el CRM.
+  async function call(model, method, args = [], kwargs = {}) {
+    if (mode === 'json2') {
+      return post(`/json/2/${model}/${method}`, { ...(args.length ? { ids: args[0] } : {}), ...kwargs }, {
+        Authorization: `bearer ${apiKey}`,
+        'X-Odoo-Database': db,
+      });
+    }
+    if (uid === null) {
+      uid = await rpc('common', 'login', [db, user, apiKey]);
+      if (!uid) throw new OdooError('Autenticación con Odoo rechazada', 502);
+    }
+    return rpc('object', 'execute_kw', [db, uid, apiKey, model, method, args, kwargs]);
+  }
+
   async function searchRead(model, domain, fields, extra = {}) {
     if (mode === 'json2') {
       return post(`/json/2/${model}/search_read`, { domain, fields, ...extra }, {
@@ -57,5 +72,5 @@ export function createOdooClient({ url, db, apiKey, mode = 'json2', user = '', t
     return rpc('object', 'execute_kw', [db, uid, apiKey, model, 'search_read', [domain], { fields, ...extra }]);
   }
 
-  return { searchRead };
+  return { searchRead, call };
 }

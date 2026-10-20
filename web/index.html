@@ -53,7 +53,7 @@
     <section id="como" class="section how">
       <h2>¿Cómo pedir?</h2>
       <ol class="steps">
-        <li><strong>Elige</strong> un producto y escríbenos por WhatsApp desde su botón.</li>
+        <li><strong>Elige</strong> uno o varios productos con «Agregar a mi pedido» e indica tus datos.</li>
         <li><strong>Cotizamos</strong> según cantidad y personalización.</li>
         <li><strong>Confirmas</strong> con un adelanto del 50 %.</li>
         <li><strong>Diseñamos</strong> y te enviamos la propuesta para revisarla.</li>
@@ -76,6 +76,40 @@
     <p class="small credit">Catálogo publicado desde Odoo CRM en Google Cloud · Proyecto Servicios Cloud – UTP, sección 45104</p>
   </footer>
 
+  <!-- Barra flotante del pedido -->
+  <button class="cart-bar" type="button" hidden>
+    <span>🛍️ Mi pedido <b class="cart-count">0</b></span>
+    <span class="cart-total"></span>
+    <span class="cart-cta">Revisar y pedir por WhatsApp →</span>
+  </button>
+
+  <!-- Panel del pedido: productos + datos de contacto -->
+  <dialog class="cart" aria-labelledby="cart-title">
+    <form class="cart-form" method="dialog" novalidate>
+      <header class="cart-head">
+        <h2 id="cart-title">🛍️ Tu pedido</h2>
+        <button class="cart-close" type="button" aria-label="Cerrar">✕</button>
+      </header>
+      <ul class="cart-items"></ul>
+      <p class="cart-sum">Total referencial: <b class="cart-total"></b><br><small>El precio final se confirma al cotizar según cantidad y personalización.</small></p>
+      <fieldset>
+        <legend>Tus datos para atenderte por WhatsApp</legend>
+        <label>Nombre<input name="nombre" autocomplete="name" required maxlength="80" placeholder="Ej.: María Pérez"></label>
+        <label>Celular<input name="telefono" type="tel" autocomplete="tel" required inputmode="tel" maxlength="20" placeholder="Ej.: 987 654 321"></label>
+        <div class="entrega" role="radiogroup" aria-label="Entrega">
+          <label class="radio"><input type="radio" name="entrega" value="recojo" checked> 🏪 Recojo en taller</label>
+          <label class="radio"><input type="radio" name="entrega" value="delivery"> 🚚 Delivery (costo adicional)</label>
+        </div>
+        <label class="distrito" hidden>Distrito<input name="distrito" maxlength="60" placeholder="Ej.: Santiago de Surco"></label>
+        <label>¿Para qué fecha lo necesitas? <small>(opcional)</small><input name="fecha" type="date"></label>
+        <label>Personalización <small>(nombres, colores, temática)</small><textarea name="detalle" rows="3" maxlength="500" placeholder="Ej.: 24 nombres para el aula 3.° B, colores rosado y lila"></textarea></label>
+      </fieldset>
+      <p class="cart-error" role="alert"></p>
+      <button class="btn btn-wa btn-send" type="submit">💬 Enviar pedido por WhatsApp</button>
+      <p class="small cart-legal">Usamos tus datos solo para atender tu pedido (Ley N.° 29733).</p>
+    </form>
+  </dialog>
+
   <template id="card">
     <article class="card">
       <div class="thumb"><img src="assets/logo-makip.jpg" loading="lazy" alt="Imagen referencial del producto" width="400" height="300"></div>
@@ -85,7 +119,10 @@
         <p class="desc"></p>
         <div class="card-foot">
           <p class="price"></p>
-          <button class="btn btn-wa" type="button">Consultar por WhatsApp</button>
+        </div>
+        <div class="card-actions">
+          <button class="btn btn-add" type="button">🛍️ Agregar a mi pedido</button>
+          <button class="btn btn-wa btn-icon" type="button" aria-label="Consultar solo este producto por WhatsApp" title="Consultar solo este producto">💬</button>
         </div>
         <p class="sku"></p>
       </div>

@@ -4,6 +4,7 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { createOdooClient, OdooError } from './odoo.js';
 import { createCatalog, imageMime, DEFAULT_DOMAIN } from './catalog.js';
+import { validarConsulta, crearRegistro, ConsultaInvalida } from './consultas.js';
 
 const MIME = { '.html': 'text/html; charset=utf-8', '.css': 'text/css; charset=utf-8', '.js': 'text/javascript; charset=utf-8',
   '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg', '.png': 'image/png', '.svg': 'image/svg+xml', '.ico': 'image/x-icon', '.webp': 'image/webp' };
@@ -22,7 +23,17 @@ async function serveStatic(dir, pathname, res) {
   } catch { return false; }
 }
 
-export function createApp({ catalog, allowedOrigins = [], staticDir = '' }) {
+function leerJson(req, max = 16_384) {
+  return new Promise((resolve, reject) => {
+    let size = 0; const chunks = [];
+    req.on('data', (c) => { size += c.length; if (size > max) { reject(new ConsultaInvalida('Solicitud demasiado grande')); req.destroy(); } else chunks.push(c); });
+    req.on('end', () => { try { resolve(JSON.parse(Buffer.concat(chunks).toString('utf8') || '{}')); } catch { reject(new ConsultaInvalida('JSON inválido')); } });
+    req.on('error', reject);
+  });
+}
+
+export function createApp({ catalog, allowedOrigins = [], staticDir = '', registrar = null, limitePorMinuto = 6 }) {
+  const intentos = new Map(); // límite simple por IP para evitar abuso del formulario
   const log = (severity, message, extra = {}) =>
     console.log(JSON.stringify({ severity, message, ...extra })); // formato estructurado para Cloud Logging
 
@@ -50,8 +61,24 @@ export function createApp({ catalog, allowedOrigins = [], staticDir = '' }) {
     const url = new URL(req.url, 'http://localhost');
     try {
       if (req.method === 'OPTIONS') {
-        res.writeHead(204, { 'Access-Control-Allow-Methods': 'GET', 'Access-Control-Max-Age': '600' });
+        res.writeHead(204, { 'Access-Control-Allow-Methods': 'GET, POST', 'Access-Control-Allow-Headers': 'Content-Type', 'Access-Control-Max-Age': '600' });
         return res.end();
+      }
+      if (req.method === 'POST' && url.pathname === '/api/consultas' && registrar) {
+        const ip = (req.headers['x-forwarded-for'] || req.socket.remoteAddress || '').split(',')[0].trim();
+        const ahora = Date.now(); const lista = (intentos.get(ip) || []).filter((t) => ahora - t < 60_000);
+        if (lista.length >= limitePorMinuto) return send(res, 429, { error: 'Demasiadas consultas, intenta en un minuto' });
+        intentos.set(ip, [...lista, ahora]);
+        try {
+          const { productos } = await catalog.list();
+          const consulta = validarConsulta(await leerJson(req), productos);
+          const r = await registrar(consulta);
+          log('INFO', 'consulta registrada', { ref: r.ref, items: consulta.items.length });
+          return send(res, 201, r);
+        } catch (err) {
+          if (err instanceof ConsultaInvalida) return send(res, 400, { error: err.message });
+          throw err;
+        }
       }
       if (req.method !== 'GET') return send(res, 405, { error: 'Método no permitido' });
 
@@ -96,5 +123,5 @@ if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) 
   const catalog = createCatalog({ odoo, domain, ttlMs: Number(env.CACHE_TTL_MS || 300_000) });
   const allowedOrigins = (env.ALLOWED_ORIGINS || 'http://localhost:3000').split(',').map((s) => s.trim());
   const port = Number(env.PORT || 8080);
-  createApp({ catalog, allowedOrigins, staticDir: env.STATIC_DIR || '' }).listen(port, () => console.log(`API de catálogo en :${port}`));
+  createApp({ catalog, allowedOrigins, staticDir: env.STATIC_DIR || '', registrar: crearRegistro({ odoo }) }).listen(port, () => console.log(`API de catálogo en :${port}`));
 }

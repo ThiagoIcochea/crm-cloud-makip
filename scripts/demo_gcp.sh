@@ -47,6 +47,7 @@ paso "3) Cargando catálogo real, pipeline y datos de prueba en Odoo"
 python3 "$REPO_ROOT/scripts/cargar_odoo.py" --url http://localhost:8069 --db makip \
   --admin-password "$ACTUAL_ADMIN" --nuevo-admin-password "$ADMIN_PW" --api-password "$API_PW"
 
+bash "$REPO_ROOT/scripts/permisos_analitica.sh"
 bash "$REPO_ROOT/scripts/publicar_landing.sh" "$PROJECT_ID"
 URL="$(gcloud run services describe "$SERVICE" --region "$REGION" --format='value(status.url)')"
 
