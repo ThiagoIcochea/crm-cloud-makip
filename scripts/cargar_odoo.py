@@ -131,9 +131,10 @@ def main():
             # cotizaciones creadas antes del cambio de moneda: una orden confirmada
             # no admite otra tarifa, así que vuelve a borrador y se reconfirma con su fecha
             for so in o("sale.order", "read", otras, ["state", "date_order"]):
-                confirmada = so["state"] == "sale"
-                if confirmada:
+                confirmada = so["state"] in ("sale", "cancel")  # "cancel": quedó a medias en una corrida anterior
+                if so["state"] == "sale":
                     o.accion("sale.order", "action_cancel", [so["id"]], context={"disable_cancel_warning": True})
+                if so["state"] != "draft":
                     o.accion("sale.order", "action_draft", [so["id"]])
                 o("sale.order", "write", [so["id"]], {"pricelist_id": tarifas[0]})
                 o.accion("sale.order", "action_update_prices", [so["id"]])
