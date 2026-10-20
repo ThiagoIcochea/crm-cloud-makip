@@ -152,7 +152,8 @@ def main():
         o("res.company", "write", [1], {"account_sale_tax_id": igv[0]})
         grupo = o("account.tax", "read", igv, ["tax_group_id"])[0]["tax_group_id"]
         if grupo:
-            o("account.tax.group", "write", [grupo[0]], {"name": "IGV 18%"})
+            for idioma in ("en_US", "es_PE", "es_419"):  # el nombre es traducible
+                o("account.tax.group", "write", [grupo[0]], {"name": "IGV 18%"}, context={"lang": idioma})
         campo = "tax_ids" if "tax_ids" in o("sale.order.line", "fields_get", [], attributes=["type"]) else "tax_id"
         lineas = o.search("sale.order.line", [["display_type", "=", False]])
         if lineas:  # vuelve a asignar el impuesto para que Odoo recalcule los totales
