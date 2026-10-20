@@ -29,7 +29,8 @@
   // ---------- WhatsApp ----------
   function waLink(text) {
     const n = (cfg.whatsappNumber || '').replace(/\D/g, '');
-    return n ? `https://wa.me/${n}?text=${encodeURIComponent(text)}` : null;
+    // api.whatsapp.com conserva los emojis; el redireccionamiento de wa.me los reemplaza por «�».
+    return n ? `https://api.whatsapp.com/send?phone=${n}&text=${encodeURIComponent(text)}` : null;
   }
   function abrirWhatsApp(text, ventana) {
     const url = waLink(text);

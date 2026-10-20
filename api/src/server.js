@@ -17,7 +17,7 @@ async function serveStatic(dir, pathname, res) {
   try {
     const body = await readFile(file);
     res.writeHead(200, { 'Content-Type': MIME[path.extname(file).toLowerCase()] || 'application/octet-stream',
-      'Cache-Control': rel === 'index.html' ? 'no-cache' : 'public, max-age=3600', 'X-Content-Type-Options': 'nosniff' });
+      'Cache-Control': /\.(html|css|js)$/.test(rel) ? 'no-cache' : 'public, max-age=3600', 'X-Content-Type-Options': 'nosniff' });
     res.end(body);
     return true;
   } catch { return false; }

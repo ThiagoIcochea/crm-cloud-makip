@@ -76,7 +76,7 @@
       for (const [k, v] of filas) { const dt = document.createElement('dt'); dt.textContent = k; const dd = document.createElement('dd'); dd.textContent = v; dl.append(dt, dd); }
       document.querySelector('.hoja .num').textContent = num;
       const n = (cfg.whatsappNumber || '').replace(/\D/g, '');
-      document.querySelector('.wa-send').href = `https://wa.me/${n}?text=${encodeURIComponent('Libro de Reclamaciones - ' + num + '\n' + filas.map(([k, v]) => k + ': ' + v).join('\n'))}`;
+      document.querySelector('.wa-send').href = `https://api.whatsapp.com/send?phone=${n}&text=${encodeURIComponent('Libro de Reclamaciones - ' + num + '\n' + filas.map(([k, v]) => k + ': ' + v).join('\n'))}`;
       f.hidden = true; document.querySelector('.hoja').hidden = false; document.querySelector('.hoja').scrollIntoView({ behavior: 'smooth' });
     });
   })();
