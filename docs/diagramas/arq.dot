@@ -1,0 +1,27 @@
+digraph G { rankdir=TB; dpi=200; pad=0.25; nodesep=0.35; ranksep=0.45; fontname="Arial"; fontsize=11; labeljust=l; fontcolor="#1F1B1C"; newrank=true;
+ node [shape=box, style="rounded,filled", fontname="Arial", fontsize=10, color="#5F6368", fillcolor="#FFFFFF", fontcolor="#1F1B1C"];
+ edge [fontname="Arial", fontsize=8, color="#5F6368", fontcolor="#3C4043"];
+ cli [label="① Cliente / prospecto\n(TikTok, redes)", shape=oval, fillcolor="#FEF7E0"];
+ staff [label="② Personal de Makip\n(ventas, diseño, producción)", shape=oval, fillcolor="#FEF7E0"];
+ wa [label="③ WhatsApp\n(app o WhatsApp Web)", fillcolor="#E6F4EA"];
+ gh [label="④ GitHub\ncrm-cloud-makip\n(código + Terraform)", fillcolor="#F1F3F4"];
+ subgraph cluster_gcp { label="Google Cloud · proyecto sc-45104-makip · región southamerica-west1 (Santiago)"; style="rounded,filled"; fillcolor="#FBF4F5"; color="#B50D30";
+  run [label="⑤ Cloud Run\nmakip-dev-catalog-api\nlanding + API de catálogo", fillcolor="#FCE8EC"];
+  ar [label="⑥ Artifact Registry\nmakip-dev-images", fillcolor="#FFFFFF"];
+  cb [label="⑦ Cloud Build", fillcolor="#FFFFFF"];
+  subgraph cluster_vpc { label="VPC makip-dev-vpc · subred 10.10.0.0/24 · zona southamerica-west1-a"; style="rounded,dashed"; color="#B50D30"; fillcolor="#FFFFFF";
+   vm [label="⑧ Compute Engine makip-dev-odoo\ne2-medium · Debian 12\nDocker: Odoo Community 19", fillcolor="#E8F0FE"];
+   sql [label="⑨ Cloud SQL PostgreSQL 16\nmakip-dev-pg · IP privada\nbackups diarios (7)", shape=cylinder, fillcolor="#E8F0FE"];
+  }
+  sm [label="⑩ Secret Manager\nodoo-db-password · odoo-api-key", fillcolor="#FFFFFF"];
+  bq [label="⑪ BigQuery\nmakip_staging · makip_marts", fillcolor="#FFFFFF"];
+  mon [label="⑫ Cloud Monitoring / Logging\nuptime check · alertas", fillcolor="#FFFFFF"];
+  gcs [label="⑬ Cloud Storage\nestado de Terraform (versionado)", shape=cylinder, fillcolor="#FFFFFF"];
+  iap [label="⑭ Identity-Aware Proxy\n(túnel administrativo)", fillcolor="#FFFFFF"];
+ }
+ cli -> run [label="HTTPS"]; run -> wa [label="mensaje contextual", style=dashed]; cli -> wa [style=dashed];
+ run -> vm [label="JSON-RPC 8069\n(VPC directa)"]; vm -> sql [label="5432 IP privada"];
+ staff -> iap -> vm [label="backoffice"]; sm -> vm [style=dotted]; sm -> run [style=dotted];
+ vm -> bq [label="ELT: extracción en la VPC\ny carga con bq", style=dashed]; run -> mon [style=dotted]; vm -> mon [style=dotted];
+ gh -> cb [label="build"]; cb -> ar -> run; gh -> gcs [label="terraform\nplan/apply", style=dashed];
+}
