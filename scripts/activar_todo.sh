@@ -12,14 +12,15 @@ paso() { printf '\n\033[1;36m######## %s\033[0m\n' "$*"; }
 gcloud config set project "$PROJECT_ID" >/dev/null
 
 paso "1/5 Plan de Terraform"
-bash "$REPO_ROOT/scripts/probar_gcp.sh" "$PROJECT_ID"
+[ "${SALTAR_PLAN:-0}" = 1 ] || bash "$REPO_ROOT/scripts/probar_gcp.sh" "$PROJECT_ID"
 
 paso "2/5 Creando la infraestructura (Cloud SQL tarda ~15 min)"
+bash "$REPO_ROOT/scripts/adoptar_restos.sh" "$PROJECT_ID"
 cd "$REPO_ROOT/infra/environments/dev"
-for intento in 1 2 3; do
-  if terraform apply -input=false -auto-approve tfplan; then break; fi
-  echo "Reintentando (propagación de APIs)…"; sleep 90
-  terraform plan -input=false -out=tfplan
+for intento in 1 2 3 4; do
+  if terraform apply -input=false -auto-approve; then break; fi
+  echo "Reintentando (propagación de APIs o recursos previos)…"; sleep 60
+  bash "$REPO_ROOT/scripts/adoptar_restos.sh" "$PROJECT_ID"
 done
 cd "$REPO_ROOT"
 
