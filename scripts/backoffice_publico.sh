@@ -19,7 +19,7 @@ if [ ! -f /etc/letsencrypt/live/$DOMINIO/fullchain.pem ]; then
   sudo docker run --rm -p 80:80 -v /etc/letsencrypt:/etc/letsencrypt certbot/certbot certonly --standalone \
     --non-interactive --agree-tos --register-unsafely-without-email -d $DOMINIO
 fi
-\$C up -d --force-recreate nginx
+\$C up -d --no-deps --force-recreate nginx
 sleep 3; \$C ps nginx
 "
 for i in 1 2 3 4 5 6; do
